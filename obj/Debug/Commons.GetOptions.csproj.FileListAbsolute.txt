@@ -1,0 +1,5 @@
+C:\Documents and Settings\rafael.teixeira\My Documents\My Projects\Managed-Commons\Commons.GetOptions\bin\Debug\Commons.GetOptions.dll
+C:\Documents and Settings\rafael.teixeira\My Documents\My Projects\Managed-Commons\Commons.GetOptions\bin\Debug\Commons.GetOptions.pdb
+C:\Documents and Settings\rafael.teixeira\My Documents\My Projects\Managed-Commons\Commons.GetOptions\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\rafael.teixeira\My Documents\My Projects\Managed-Commons\Commons.GetOptions\obj\Debug\Commons.GetOptions.dll
+C:\Documents and Settings\rafael.teixeira\My Documents\My Projects\Managed-Commons\Commons.GetOptions\obj\Debug\Commons.GetOptions.pdb

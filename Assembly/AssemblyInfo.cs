@@ -35,8 +35,5 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCulture("")]		
 [assembly: CLSCompliant(true)]		
 
-[assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("commons.pub")]
-
 [assembly: AssemblyVersion("1.0.2007.1")] 
 [assembly: AssemblyProduct("Managed.Commons.GetOptions")]

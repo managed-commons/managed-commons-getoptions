@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{46274489-59F8-4680-AF42-D688E3E899B2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Assembly</AppDesignerFolder>
+    <RootNamespace>Commons.GetOptions</RootNamespace>
+    <AssemblyName>Commons.GetOptions</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commons.GetOptions\ArgumentProcessorAttribute.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="Commons.GetOptions\KillInheritedOptionAttribute.cs" />
+    <Compile Include="Commons.GetOptions\OptionAttribute.cs" />
+    <Compile Include="Commons.GetOptions\OptionDetails.cs" />
+    <Compile Include="Commons.GetOptions\OptionList.cs" />
+    <Compile Include="Commons.GetOptions\Options.cs" />
+    <Compile Include="Commons.GetOptions\OptionsParsingMode.cs" />
+    <Compile Include="Commons\AboutAttribute.cs" />
+    <Compile Include="Commons\AdditionalInfoAttribute.cs" />
+    <Compile Include="Commons\AuthorAttribute.cs" />
+    <Compile Include="Commons\IsPartOfPackageAttribute.cs" />
+    <Compile Include="Commons\ReportBugsToAttribute.cs" />
+    <Compile Include="Commons\UsageComplementAttribute.cs" />
+    <Compile Include="Commons.GetOptions.Useful.Compilers\CommonCompilerOptions.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
