@@ -1,5 +1,7 @@
-2007-11-20  Rafael Teixeira <rafaelteixeirabr@hotmail.com> 
+2010-05-26  Rafael Teixeira <monoman@gmail.com>
+	Migrated to GitHub, with a VS2010 solution/project
 
+2007-11-20  Rafael Teixeira <rafaelteixeirabr@hotmail.com> 
 	Adjust licensing, adding translation support, independent versioning
 
 2007-01-16:8  Rafael Teixeira  <monoman@gmail.com>
