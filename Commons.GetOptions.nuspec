@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://github.com/monoman/Managed-Commons/blob/master/Commons.GetOptions/license.md</licenseUrl>
+    <projectUrl>https://github.com/monoman/Managed-Commons</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>Initial Nuget packaging!</releaseNotes>
+    <copyright>Copyright (c) 2014 Managed Commons Team</copyright>
+    <tags>options parsing</tags>
+  </metadata>
+</package>
