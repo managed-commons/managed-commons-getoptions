@@ -1,6 +1,6 @@
 // Commons.GetOptions Assembly Information
 //
-// Copyright ©2002-2007 Rafael 'Monoman' Teixeira
+// Copyright ©2002-2014 Rafael 'Monoman' Teixeira, Managed Commons Team
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,11 +29,12 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTitle("Commons.GetOptions")]
 [assembly: AssemblyDescription("Command line arguments parsing library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("WEBforAll Teleinformática S/C Ltda.")]
-[assembly: AssemblyCopyright("Copyright ©2002-2007 Rafael 'Monoman' Teixeira")]
+[assembly: AssemblyCompany("Managed Commons Project")]
+[assembly: AssemblyCopyright("Copyright ©2002-2014 Rafael 'Monoman' Teixeira, Managed Commons Team")]
 [assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]		
-[assembly: CLSCompliant(true)]		
+[assembly: AssemblyCulture("")]
+[assembly: CLSCompliant(true)]
 
-[assembly: AssemblyVersion("1.0.2007.1")] 
+[assembly: AssemblyVersion("1.0.2014.1")]
 [assembly: AssemblyProduct("Managed.Commons.GetOptions")]
+[assembly: AssemblyInformationalVersion("1.0")]
