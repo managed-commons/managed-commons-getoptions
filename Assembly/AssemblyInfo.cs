@@ -29,7 +29,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTitle("Commons.GetOptions")]
 [assembly: AssemblyDescription("Command line arguments parsing library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Managed Commons Project")]
+[assembly: AssemblyCompany("Managed Commons Team")]
 [assembly: AssemblyCopyright("Copyright ©2002-2014 Rafael 'Monoman' Teixeira, Managed Commons Team")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
