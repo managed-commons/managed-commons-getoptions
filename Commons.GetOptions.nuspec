@@ -6,8 +6,8 @@
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
-    <licenseUrl>https://github.com/monoman/Managed-Commons/blob/master/Commons.GetOptions/license.md</licenseUrl>
-    <projectUrl>https://github.com/monoman/Managed-Commons</projectUrl>
+    <licenseUrl>https://github.com/monoman/managed-commons-getoptions/blob/master/license.md</licenseUrl>
+    <projectUrl>https://github.com/monoman/managed-commons-getoptions</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>Initial Nuget packaging!</releaseNotes>
