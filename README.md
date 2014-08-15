@@ -1,5 +1,5 @@
-Commons.Locale.GetOptions
-============================
+Commons.GetOptions
+==================
 
 Managed Commons library for command line arguments parsing. 
 
