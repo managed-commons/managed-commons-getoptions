@@ -1,5 +1,5 @@
-//
-// ArgumentProcessorAttribute.cs
+﻿//
+// CommandProcessorAttribute.cs
 //
 // Copyright ©2002-2014 Rafael 'Monoman' Teixeira, Managed Commons Team
 //
@@ -24,14 +24,21 @@
 //
 
 using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Commons.GetOptions
 {
+    [AttributeUsage(AttributeTargets.Class)]
+    public class CommandProcessorAttribute : Attribute
+    {
+        public string Description;
+        public string Name;
 
-	[AttributeUsage(AttributeTargets.Method)]
-	public class ArgumentProcessorAttribute : Attribute
-	{
-		public ArgumentProcessorAttribute() {}
-	}
-
+        public CommandProcessorAttribute(string name, string description)
+        {
+            Name = name;
+            Description = description;
+        }
+    }
 }
