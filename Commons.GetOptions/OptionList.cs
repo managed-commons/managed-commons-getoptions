@@ -25,6 +25,7 @@ using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Linq;
 
 namespace Commons.GetOptions
 {
@@ -210,6 +211,7 @@ namespace Commons.GetOptions
 		private ArrayList _list = new ArrayList();
 		private Options _optionBundle = null;
 		private OptionsParsingMode _parsingMode;
+		private string _appLicense;
 
 		private static int IndexOfAny(string where, params char[] what)
 		{
@@ -253,7 +255,9 @@ namespace Commons.GetOptions
 			}
 
 			_appExeName = _entry.GetName().Name;
-			_appVersion = _entry.GetName().Version.ToString();
+			GetAssemblyAttributeValue(typeof(AssemblyInformationalVersionAttribute), "InformationalVersion", ref _appVersion);
+			if (string.IsNullOrWhiteSpace(_appVersion))
+				_appVersion = _entry.GetName().Version.ToString();
 			GetAssemblyAttributeValue(typeof(AssemblyTitleAttribute), "Title", ref _appTitle);
 			GetAssemblyAttributeValue(typeof(AssemblyCopyrightAttribute), "Copyright", ref _appCopyright);
 			GetAssemblyAttributeValue(typeof(AssemblyDescriptionAttribute), "Description", ref _appDescription);
@@ -261,11 +265,15 @@ namespace Commons.GetOptions
 			GetAssemblyAttributeValue(typeof(Commons.UsageComplementAttribute), ref _appUsageComplement);
 			GetAssemblyAttributeValue(typeof(Commons.AdditionalInfoAttribute), ref _appAdditionalInfo);
 			GetAssemblyAttributeValue(typeof(Commons.ReportBugsToAttribute), ref _appReportBugsTo);
-			_appAuthors = GetAssemblyAttributeStrings(typeof(AuthorAttribute));
-			if (_appAuthors.Length == 0) {
+			string authors = string.Empty;
+			GetAssemblyAttributeValue(typeof(AssemblyCompanyAttribute), "Company", ref authors);
+			_appLicense = GetAssemblyAttributeStrings(typeof(LicenseAttribute)).FirstOrDefault();
+			if (string.IsNullOrWhiteSpace(authors)) {
 				_appAuthors = new String[1];
-				_appAuthors[0] = "Add one or more [assembly: Commons.Author(\"Here goes the author name\")] to your assembly";
-			}
+				_appAuthors[0] = "Add one or more [assembly: AssemblyCompany(\"Here goes the authors names, separated by commas\")] to your assembly";
+			} else
+				_appAuthors = authors.Split(',');
+
 		}
 
 		private object[] GetAssemblyAttributes(Type type)
@@ -455,6 +463,8 @@ namespace Commons.GetOptions
 		{
 			ShowBanner();
 			Console.WriteLine(translate(_appDescription));
+			if (!string.IsNullOrWhiteSpace(_appLicense))
+				Console.WriteLine("\r\n" + translate("License: ") + _appLicense);
 			Console.WriteLine();
 		}
 

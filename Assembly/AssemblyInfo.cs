@@ -22,6 +22,7 @@
 
 using System;
 using System.Reflection;
+using Commons;
 
 [assembly: AssemblyTitle("Commons.GetOptions")]
 [assembly: AssemblyDescription("Command line arguments parsing library")]
@@ -31,6 +32,9 @@ using System.Reflection;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: CLSCompliant(true)]
-[assembly: AssemblyVersion("1.0.2015.1")]
+[assembly: AssemblyVersion("1.1.2015.2")]
+[assembly: AssemblyFileVersion("1.1.2015.2")]
 [assembly: AssemblyProduct("Managed.Commons.GetOptions")]
-[assembly: AssemblyInformationalVersion("1.0.1")]
+[assembly: AssemblyInformationalVersion("1.1.0")]
+
+[assembly: License(LicenseType.MIT)]

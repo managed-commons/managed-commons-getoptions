@@ -19,3 +19,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
+using System;
+using System.Reflection;
+
+[assembly: AssemblyTitle("mcat")]
+[assembly: AssemblyDescription("Just a simulated cat to demonstrate Commons.GetOptions")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("Rafael 'Monoman' Teixeira, Managed Commons Team")]
+[assembly: AssemblyCopyright("Copyright ©2002-2015 Rafael 'Monoman' Teixeira, Managed Commons Team")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+[assembly: CLSCompliant(true)]
+[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: AssemblyProduct("Managed.Commons.GetOptions")]
+[assembly: AssemblyInformationalVersion("1.1.0")]

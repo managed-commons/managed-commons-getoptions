@@ -57,10 +57,10 @@ Report bugs to <bug-coreutils@gnu.org>.
 
 
 [assembly: Commons.About("Just a simulated cat to demonstrate Commons.GetOptions")]
-[assembly: Commons.Author("Rafael Teixeira")]
 [assembly: Commons.UsageComplement("[FILE]...\nConcatenate FILE(s), or standard input, to standard output.")]
 [assembly: Commons.AdditionalInfo("With no FILE, or when FILE is -, read standard input.")]
 [assembly: Commons.ReportBugsTo("rafaelteixeirabr@hotmail.com")]
+[assembly: Commons.License(Commons.LicenseType.MIT)]
 
 public class CatLikeOptions : Options
 {
