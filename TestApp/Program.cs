@@ -7,14 +7,16 @@ namespace TestApp
 		public static void Main (string[] args)
 		{
 			var options = new AppOptions(args);
-			options.DoAbout();
-			Console.WriteLine("======================================================");
+            Console.WriteLine("=================================================== -V --version");
+            options.DoAbout();
+			Console.WriteLine("=================================================== usage");
 			options.DoUsage();
-			Console.WriteLine("======================================================");
+			Console.WriteLine("=================================================== -? --help");
 			options.DoHelp();
-			Console.WriteLine("======================================================");
+			Console.WriteLine("=================================================== --help2");
 			options.DoHelp2();
-			Console.WriteLine("======================================================");
+			Console.WriteLine("=================================================== Press a key");
+            Console.ReadKey();
 		}
 	}
 }

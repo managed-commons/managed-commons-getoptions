@@ -35,6 +35,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCulture("")]
 [assembly: CLSCompliant(true)]
 
-[assembly: AssemblyVersion("2.0.2014.1")]
+[assembly: AssemblyVersion("2.0.2")]
+[assembly: AssemblyFileVersion("2.0.2")]
 [assembly: AssemblyProduct("Managed.Commons.GetOptions")]
 [assembly: AssemblyInformationalVersion("2.0")]

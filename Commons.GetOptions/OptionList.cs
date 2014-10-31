@@ -60,6 +60,7 @@ namespace Commons.GetOptions
 		private string appCopyright = "Add a [assembly: AssemblyCopyright(\"(c)200n Here goes the copyright holder name\")] to your assembly";
 		private string appDescription = "Add a [assembly: AssemblyDescription(\"Here goes the short description\")] to your assembly";
 		private string appAboutDetails = null;
+        private string appLicenseDetails = null;
 		private string appUsageComplement = null;
 		private string appAdditionalInfo = null;
 		private string appReportBugsTo = null;
@@ -164,7 +165,8 @@ namespace Commons.GetOptions
 			GetAssemblyAttributeValue(typeof(AssemblyTitleAttribute), "Title", ref appTitle);
 			GetAssemblyAttributeValue(typeof(AssemblyCopyrightAttribute), "Copyright", ref appCopyright);
 			GetAssemblyAttributeValue(typeof(AssemblyDescriptionAttribute), "Description", ref appDescription);
-			GetAssemblyAttributeValue(typeof(Commons.AboutAttribute), ref appAboutDetails);
+            GetAssemblyAttributeValue(typeof(Commons.LicenseAttribute), ref appLicenseDetails);
+            GetAssemblyAttributeValue(typeof(Commons.AboutAttribute), ref appAboutDetails);
 			GetAssemblyAttributeValue(typeof(Commons.UsageComplementAttribute), ref appUsageComplement);
 			GetAssemblyAttributeValue(typeof(Commons.AdditionalInfoAttribute), ref appAdditionalInfo);
 			GetAssemblyAttributeValue(typeof(Commons.ReportBugsToAttribute), ref appReportBugsTo);
@@ -265,6 +267,8 @@ namespace Commons.GetOptions
 		{
 			if (!bannerAlreadyShown) {
 				Console.WriteLine(translate(appTitle) + " " + translate(appVersion) + " - " + translate(appCopyright));
+                if (appLicenseDetails != null)
+                    Console.WriteLine("-- " + appLicenseDetails);
 				if (AdditionalBannerInfo != null)
 					Console.WriteLine(AdditionalBannerInfo);
 			}
