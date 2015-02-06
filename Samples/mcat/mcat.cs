@@ -59,10 +59,6 @@ With no FILE, or when FILE is -, read standard input.
 Report bugs to <bug-coreutils@gnu.org>.
 */
 
-[assembly: AssemblyTitle("mcat")]
-[assembly: AssemblyCopyright("(c)2005-2007 Rafael Teixeira")]
-[assembly: AssemblyDescription("Simulated cat-like program")]
-[assembly: AssemblyVersion ("2.0.0.0")]
 
 [assembly: Commons.About("Just a simulated cat to demonstrate Commons.GetOptions")]
 [assembly: Commons.Author("Rafael Teixeira")]
