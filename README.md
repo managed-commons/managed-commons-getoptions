@@ -1,7 +1,7 @@
 Commons.GetOptions
 ============================
 
-[![Join the chat at https://gitter.im/monoman/managed-commons-getoptions](chat.svg)](https://gitter.im/monoman/managed-commons-getoptions?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/monoman/managed-commons-getoptions](https://raw.githubusercontent.com/monoman/managed-commons-getoptions/master/chat.svg)](https://gitter.im/monoman/managed-commons-getoptions?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ----------
 
