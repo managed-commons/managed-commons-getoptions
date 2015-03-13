@@ -6,12 +6,12 @@
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
-    <licenseUrl>https://github.com/monoman/Managed-Commons/blob/master/Commons.GetOptions/license.md</licenseUrl>
+    <licenseUrl>https://raw.githubusercontent.com/monoman/managed-commons-getoptions/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/monoman/Managed-Commons</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Initial Nuget packaging!</releaseNotes>
-    <copyright>Copyright (c) 2014 Managed Commons Team</copyright>
+    <releaseNotes>Licensing unification!</releaseNotes>
+    <copyright>Copyright (c) 2002-2015 Rafael 'Monoman' Teixeira, Managed Commons Team</copyright>
     <tags>options parsing</tags>
   </metadata>
 </package>

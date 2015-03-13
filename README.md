@@ -5,19 +5,19 @@ Commons.GetOptions
 
 ----------
 
-Managed Commons library for command line arguments parsing. 
+Managed Commons library for command line arguments parsing.
 
-It is the evolution of the years-old Mono.GetOptions library, distributed with [Mono](http://www.mono-project.com) and still in use in applications like MonoDevelop/Xamarin Studio. 
+It is the evolution of the years-old Mono.GetOptions library, distributed with [Mono](http://www.mono-project.com) and still in use in applications like MonoDevelop/Xamarin Studio.
 I created Mono.GetOptions, but now it is frozen/deprecated in Mono, so the evolution is going to happen in this Managed Commons project.
 
-__Commons.GetOptions 1.0.0 is now available as a Nuget:__ [Commons.GetOptions](https://www.nuget.org/packages/Commons.GetOptions/).
+__Commons.GetOptions 1.0.1 is now available as a Nuget:__ [Commons.GetOptions](https://www.nuget.org/packages/Commons.GetOptions/).
 
 ----------
 
 License: MIT
 ------------
 
-Copyright (c) 2005-2015 Rafael 'Monoman' Teixeira, Managed Commons Team
+Copyright (c) 2002-2015 Rafael 'Monoman' Teixeira, Managed Commons Team
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

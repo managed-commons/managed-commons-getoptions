@@ -1,30 +1,26 @@
-//
-// mcat.cs: Something similar to cat to exemplify using
-//          Commons.GetOptions
-//
-// Author: Rafael Teixeira (monoman@gmail.com)
-//
-// (C) 2005 Rafael Teixeira
-//
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
+// Commons.GetOptions
 // 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
+// Copyright (c) 2002-2015 Rafael 'Monoman' Teixeira, Managed Commons Team
 // 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+
 
 using System;
 using System.Collections;
@@ -66,73 +62,72 @@ Report bugs to <bug-coreutils@gnu.org>.
 [assembly: Commons.AdditionalInfo("With no FILE, or when FILE is -, read standard input.")]
 [assembly: Commons.ReportBugsTo("rafaelteixeirabr@hotmail.com")]
 
-public class CatLikeOptions : Options 
-{	
-	[Option("display TAB characters as ^I", 'T', "show-tabs")]
-	public bool ShowTabs;
+public class CatLikeOptions : Options
+{
+    [Option("display TAB characters as ^I", 'T', "show-tabs")]
+    public bool ShowTabs;
 
-	[Option("display $ at end of each line", 'E', "show-ends")]
-	public bool ShowLineEnds;
-	
-	[Option("use ^ and M- notation, except for LFD and TAB", 'v', "show-nonprinting")]
-	public bool ShowNonPrinting;
+    [Option("display $ at end of each line", 'E', "show-ends")]
+    public bool ShowLineEnds;
 
-	[Option("equivalent to -vE", 'e', null)]
-	public bool ShowLineEndsAndNonPrinting { set { ShowLineEnds = ShowNonPrinting = value; } }
-	
-	[Option("equivalent to -vT", 't', null)]
-	public bool ShowLineEndsAndTabs { set { ShowTabs = ShowNonPrinting = value; } }
-	
-	[Option("equivalent to -vET", 'A', "show-all")]
-	public bool showAll { set { ShowTabs = ShowLineEnds = ShowNonPrinting = value; } }
-	
-	[Option("number nonblank output lines", 'b', "number-nonblank")]
-	public bool NumberNonBlank;
-	
-	[Option("number all output lines", 'n', "number")]
-	public bool NumberAllLines;
-	
-	[Option("never more than one single blank line", 's', "squeeze-blank")]
-	public bool SqueezeBlankLines;
-	
-	[Option("(ignored)", 'u', null)]
-	public bool Ignored;
+    [Option("use ^ and M- notation, except for LFD and TAB", 'v', "show-nonprinting")]
+    public bool ShowNonPrinting;
 
-	[Option("output version information and exit", "version")]
-	public override WhatToDoNext DoAbout()
-	{
-		return base.DoAbout();
-	}
+    [Option("equivalent to -vE", 'e', null)]
+    public bool ShowLineEndsAndNonPrinting { set { ShowLineEnds = ShowNonPrinting = value; } }
 
-	[Option("display this help and exit", "help")]
-	public override WhatToDoNext DoHelp()
-	{
-		return base.DoHelp();
-	}
+    [Option("equivalent to -vT", 't', null)]
+    public bool ShowLineEndsAndTabs { set { ShowTabs = ShowNonPrinting = value; } }
 
-	[KillInheritedOption]
-	public override WhatToDoNext DoHelp2() { return WhatToDoNext.GoAhead; }
+    [Option("equivalent to -vET", 'A', "show-all")]
+    public bool showAll { set { ShowTabs = ShowLineEnds = ShowNonPrinting = value; } }
 
-	[KillInheritedOption]
-	public override WhatToDoNext DoUsage() { return WhatToDoNext.GoAhead; }
+    [Option("number nonblank output lines", 'b', "number-nonblank")]
+    public bool NumberNonBlank;
 
-	public CatLikeOptions(string[] args) : base(args) {}
-	
-	protected override void InitializeOtherDefaults() 
-	{
-		ParsingMode = OptionsParsingMode.Both | OptionsParsingMode.GNU_DoubleDash;
-		BreakSingleDashManyLettersIntoManyOptions = true; 
-	}
+    [Option("number all output lines", 'n', "number")]
+    public bool NumberAllLines;
 
+    [Option("never more than one single blank line", 's', "squeeze-blank")]
+    public bool SqueezeBlankLines;
+
+    [Option("(ignored)", 'u', null)]
+    public bool Ignored;
+
+    [Option("output version information and exit", "version")]
+    public override WhatToDoNext DoAbout()
+    {
+        return base.DoAbout();
+    }
+
+    [Option("display this help and exit", "help")]
+    public override WhatToDoNext DoHelp()
+    {
+        return base.DoHelp();
+    }
+
+    [KillInheritedOption]
+    public override WhatToDoNext DoHelp2() { return WhatToDoNext.GoAhead; }
+
+    [KillInheritedOption]
+    public override WhatToDoNext DoUsage() { return WhatToDoNext.GoAhead; }
+
+    public CatLikeOptions(string[] args) : base(args) { }
+
+    protected override void InitializeOtherDefaults()
+    {
+        ParsingMode = OptionsParsingMode.Both | OptionsParsingMode.GNU_DoubleDash;
+        BreakSingleDashManyLettersIntoManyOptions = true;
+    }
 }
 
-public class Driver {
+public class Driver
+{
+    public static int Main(string[] args)
+    {
+        CatLikeOptions options = new CatLikeOptions(args);
 
-	public static int Main (string[] args)
-	{
-		CatLikeOptions options = new CatLikeOptions(args);
-		
-		Console.WriteLine(@"This is just a simulation of a cat-like program.
+        Console.WriteLine(@"This is just a simulation of a cat-like program.
 
 The command line options where processed by Commons.GetOptions and resulted as:
 
@@ -145,18 +140,17 @@ The command line options where processed by Commons.GetOptions and resulted as:
   
   RunningOnWindows = {6}
 
-", 
-			options.ShowTabs, options.ShowLineEnds, options.ShowNonPrinting,
-			options.NumberNonBlank, options.NumberAllLines, options.SqueezeBlankLines, options.RunningOnWindows);
-			
-		if (options.GotNoArguments || options.FirstArgument == "-")
-			Console.WriteLine("No arguments provided so cat would be copying stdin to stdout");
-		else 
-			Console.WriteLine("Would be copying these files to stdout: {0}", 
-				String.Join(", ", options.RemainingArguments));
-		Console.WriteLine("\nFollows help screen\n---------------------------------------------\n");
-		options.DoHelp();
-		return 0;
-	}
+",
+            options.ShowTabs, options.ShowLineEnds, options.ShowNonPrinting,
+            options.NumberNonBlank, options.NumberAllLines, options.SqueezeBlankLines, options.RunningOnWindows);
 
+        if (options.GotNoArguments || options.FirstArgument == "-")
+            Console.WriteLine("No arguments provided so cat would be copying stdin to stdout");
+        else
+            Console.WriteLine("Would be copying these files to stdout: {0}",
+                String.Join(", ", options.RemainingArguments));
+        Console.WriteLine("\nFollows help screen\n---------------------------------------------\n");
+        options.DoHelp();
+        return 0;
+    }
 }

@@ -52,12 +52,22 @@
     <Compile Include="Commons.GetOptions.Useful.Compilers\CommonCompilerOptions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Commons.GetOptions.nuspec" />
+    <None Include="LICENSE" />
     <None Include="README.md" />
     <None Include="Commons.GetOptions-license.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>cd $(SolutionDir)
+nuget pack $(ProjectFileName)</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
