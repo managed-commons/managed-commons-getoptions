@@ -10,7 +10,7 @@
     <AppDesignerFolder>Assembly</AppDesignerFolder>
     <RootNamespace>Commons.GetOptions</RootNamespace>
     <AssemblyName>Commons.GetOptions</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -38,6 +38,7 @@
     <Compile Include="Commons.GetOptions\ArgumentProcessorAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Commons.GetOptions\KillInheritedOptionAttribute.cs" />
+    <Compile Include="Commons\LicenseAttribute.cs" />
     <Compile Include="Commons.GetOptions\OptionAttribute.cs" />
     <Compile Include="Commons.GetOptions\OptionDetails.cs" />
     <Compile Include="Commons.GetOptions\OptionList.cs" />
@@ -45,11 +46,12 @@
     <Compile Include="Commons.GetOptions\OptionsParsingMode.cs" />
     <Compile Include="Commons\AboutAttribute.cs" />
     <Compile Include="Commons\AdditionalInfoAttribute.cs" />
-    <Compile Include="Commons\AuthorAttribute.cs" />
     <Compile Include="Commons\IsPartOfPackageAttribute.cs" />
     <Compile Include="Commons\ReportBugsToAttribute.cs" />
     <Compile Include="Commons\UsageComplementAttribute.cs" />
     <Compile Include="Commons.GetOptions.Useful.Compilers\CommonCompilerOptions.cs" />
+    <Compile Include="Commons.GetOptions\CommandProcessorAttribute.cs" />
+    <Compile Include="Commons.GetOptions\Commands.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Commons.GetOptions.nuspec" />
@@ -61,12 +63,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PostBuildEvent>cd $(SolutionDir)
-nuget pack $(ProjectFileName)</PostBuildEvent>
+    <PostBuildEvent>
+		cd $(ProjectDir)
+		nuget pack $(ProjectFileName)
+	</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -27,88 +27,27 @@ namespace Commons.GetOptions
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method)]
 	public class OptionAttribute : Attribute
 	{
-		public string AlternateForm;
-		public string LongForm;
-		public int MaxOccurs;
-		public bool SecondLevelHelp;
-		public string ShortDescription;
-		public char ShortForm;
-		// negative means there is no limit
-
-		public bool VBCStyleBoolean;
-
 		public OptionAttribute(string shortDescription)
 		{
-			SetValues(shortDescription, ' ', string.Empty, string.Empty, 1);
+			Description = shortDescription;
+			ShortForm = ' ';
+			MaxOccurs = 1;
 		}
 
-		public OptionAttribute(string shortDescription, char shortForm)
-		{
-			SetValues(shortDescription, shortForm, string.Empty, string.Empty, 1);
-		}
+		public string AlternateForm { get; set; }
 
-		public OptionAttribute(string shortDescription, char shortForm, string longForm)
-		{
-			SetValues(shortDescription, shortForm, longForm, string.Empty, 1);
-		}
+		public string Description { get; set; }
 
-		public OptionAttribute(string shortDescription, string longForm)
-		{
-			SetValues(shortDescription, ' ', longForm, string.Empty, 1);
-		}
+		public int MaxOccurs { get; set; }
 
-		public OptionAttribute(string shortDescription, char shortForm, string longForm, string alternateForm)
-		{
-			SetValues(shortDescription, shortForm, longForm, alternateForm, 1);
-		}
+		public string Name { get; set; }
 
-		public OptionAttribute(string shortDescription, string longForm, string alternateForm)
-		{
-			SetValues(shortDescription, ' ', longForm, alternateForm, 1);
-		}
+		public bool SecondLevelHelp { get; set; }
 
-		public OptionAttribute(int maxOccurs, string shortDescription)
-		{
-			SetValues(shortDescription, ' ', string.Empty, string.Empty, maxOccurs);
-		}
+		public char ShortForm { get; set; }
 
-		public OptionAttribute(int maxOccurs, string shortDescription, char shortForm)
-		{
-			SetValues(shortDescription, shortForm, string.Empty, string.Empty, maxOccurs);
-		}
+		// negative means there is no limit
 
-		public OptionAttribute(int maxOccurs, string shortDescription, char shortForm, string longForm)
-		{
-			SetValues(shortDescription, shortForm, longForm, string.Empty, maxOccurs);
-		}
-
-		public OptionAttribute(int maxOccurs, string shortDescription, string longForm)
-		{
-			SetValues(shortDescription, ' ', longForm, string.Empty, maxOccurs);
-		}
-
-		public OptionAttribute(int maxOccurs, string shortDescription, char shortForm, string longForm, string alternateForm)
-		{
-			SetValues(shortDescription, shortForm, longForm, alternateForm, maxOccurs);
-		}
-
-		public OptionAttribute(int maxOccurs, string shortDescription, string longForm, string alternateForm)
-		{
-			SetValues(shortDescription, ' ', longForm, alternateForm, maxOccurs);
-		}
-
-		private void SetValues(
-			string shortDescription,
-			char shortForm,
-			string longForm,
-			string alternateForm,
-			int maxOccurs)
-		{
-			ShortDescription = shortDescription;
-			ShortForm = shortForm;
-			LongForm = longForm;
-			MaxOccurs = maxOccurs;
-			AlternateForm = alternateForm;
-		}
+		public bool VBCStyleBoolean { get; set; }
 	}
 }

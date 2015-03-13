@@ -22,7 +22,9 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -37,28 +39,40 @@ namespace Commons.GetOptions
 		public ErrorReporter ReportError;
 		public Translate Translator;
 
-		public OptionList(Options optionBundle)
+		public OptionList(object optionBundle,
+						   OptionsParsingMode mode = OptionsParsingMode.Both,
+						   bool breakSingleDashManyLettersIntoManyOptions = false,
+						   bool endOptionProcessingWithDoubleDash = true,
+						   bool dontSplitOnCommas = false,
+						   ErrorReporter errorReporter = null)
 		{
 			if (optionBundle == null)
 				throw new ArgumentNullException("optionBundle");
 
 			Type optionsType = optionBundle.GetType();
-			_optionBundle = optionBundle;
-			_parsingMode = optionBundle.ParsingMode;
-			_breakSingleDashManyLettersIntoManyOptions = optionBundle.BreakSingleDashManyLettersIntoManyOptions;
-			_endOptionProcessingWithDoubleDash = optionBundle.EndOptionProcessingWithDoubleDash;
-			this.ReportError = optionBundle.ReportError;
+			this.optionBundle = optionBundle;
+			this.parsingMode = mode;
+			this.breakSingleDashManyLettersIntoManyOptions = breakSingleDashManyLettersIntoManyOptions;
+			this.endOptionProcessingWithDoubleDash = endOptionProcessingWithDoubleDash;
+			this.ReportError = errorReporter;
 
 			ExtractEntryAssemblyInfo(optionsType);
+
+			object[] classAttribs = optionsType.GetCustomAttributes(typeof(CommandProcessorAttribute), false);
+			if (classAttribs != null && classAttribs.Length > 0) {
+				var commandProcessor = (CommandProcessorAttribute)classAttribs[0];
+				this.CommandName = commandProcessor.Name;
+				this.CommandDescription = commandProcessor.Description;
+			}
 
 			foreach (MemberInfo mi in optionsType.GetMembers()) {
 				object[] attribs = mi.GetCustomAttributes(typeof(KillInheritedOptionAttribute), true);
 				if (attribs == null || attribs.Length == 0) {
 					attribs = mi.GetCustomAttributes(typeof(OptionAttribute), true);
 					if (attribs != null && attribs.Length > 0) {
-						OptionDetails option = new OptionDetails(mi, (OptionAttribute)attribs[0], optionBundle, translate);
-						_list.Add(option);
-						_hasSecondLevelHelp = _hasSecondLevelHelp || option.SecondLevelHelp;
+						OptionDetails option = new OptionDetails(mi, (OptionAttribute)attribs[0], optionBundle, mode, dontSplitOnCommas, translate);
+						list.Add(option);
+						HasSecondLevelHelp = HasSecondLevelHelp || option.SecondLevelHelp;
 					} else if (mi.DeclaringType == mi.ReflectedType) { // not inherited
 						attribs = mi.GetCustomAttributes(typeof(ArgumentProcessorAttribute), true);
 						if (attribs != null && attribs.Length > 0)
@@ -67,7 +81,7 @@ namespace Commons.GetOptions
 				}
 			}
 
-			if (_argumentProcessor == null) // try to find an inherited one
+			if (argumentProcessor == null) // try to find an inherited one
 				foreach (MemberInfo mi in optionsType.GetMembers())
 					if (mi.DeclaringType != mi.ReflectedType) { // inherited
 						object[] attribs = mi.GetCustomAttributes(typeof(ArgumentProcessorAttribute), true);
@@ -80,7 +94,7 @@ namespace Commons.GetOptions
 		{
 			get
 			{
-				return translate(_appAboutDetails);
+				return translate(appAboutDetails);
 			}
 		}
 
@@ -88,20 +102,21 @@ namespace Commons.GetOptions
 		{
 			get
 			{
-				string format = translate("Usage: {0} [options] {1}");
-				return string.Format(format, _appExeName, translate(_appUsageComplement));
+				string format = translate("Usage: {0} {2}[options] {1}");
+				return string.Format(format, appExeName, translate(appUsageComplement), translate(paddedCommandName()));
 			}
 		}
 
-		public string[] ProcessArgs(string[] args)
+		public string[] ProcessArgs(IEnumerable<string> theArgs)
 		{
+			string[] args = theArgs.ToArray();
 			string arg;
 			string nextArg;
 			bool OptionWasProcessed;
 
-			_list.Sort();
+			list.Sort();
 
-			OptionDetails.LinkAlternatesInsideList(_list);
+			OptionDetails.LinkAlternatesInsideList(list);
 
 			args = NormalizeArgs(args);
 
@@ -117,7 +132,7 @@ namespace Commons.GetOptions
 					OptionWasProcessed = false;
 
 					if (arg.Length > 1 && (arg.StartsWith("-") || arg.StartsWith("/"))) {
-						foreach (OptionDetails option in _list) {
+						foreach (OptionDetails option in list) {
 							OptionProcessingResult result = option.ProcessArgument(arg, nextArg);
 							if (result != OptionProcessingResult.NotThisOption) {
 								OptionWasProcessed = true;
@@ -132,13 +147,13 @@ namespace Commons.GetOptions
 						ProcessNonOption(arg);
 				}
 
-				foreach (OptionDetails option in _list)
+				foreach (OptionDetails option in list)
 					option.TransferValues();
 
-				foreach (string argument in _argumentsTail)
+				foreach (string argument in argumentsTail)
 					ProcessNonOption(argument);
 
-				return (string[])_arguments.ToArray(typeof(string));
+				return (string[])arguments.ToArray(typeof(string));
 			} catch (Exception ex) {
 				System.Console.WriteLine(ex.ToString());
 				System.Environment.Exit(1);
@@ -149,12 +164,14 @@ namespace Commons.GetOptions
 
 		public void ShowBanner()
 		{
-			if (!_bannerAlreadyShown) {
-				Console.WriteLine(translate(_appTitle) + "  " + translate(_appVersion) + " - " + translate(_appCopyright));
+			if (!bannerAlreadyShown) {
+				Console.WriteLine(translate(appTitle) + " " + translate(appVersion) + " - " + translate(appCopyright));
+				if (appLicenseDetails != null)
+					Console.WriteLine("-- " + appLicenseDetails);
 				if (AdditionalBannerInfo != null)
 					Console.WriteLine(AdditionalBannerInfo);
 			}
-			_bannerAlreadyShown = true;
+			bannerAlreadyShown = true;
 		}
 
 		internal string AdditionalBannerInfo;
@@ -168,6 +185,12 @@ namespace Commons.GetOptions
 		internal WhatToDoNext DoHelp()
 		{
 			ShowHelp(false);
+			return WhatToDoNext.AbandonProgram;
+		}
+
+		internal WhatToDoNext DoHelp(List<ICommand> commands)
+		{
+			ShowHelp(commands);
 			return WhatToDoNext.AbandonProgram;
 		}
 
@@ -185,31 +208,34 @@ namespace Commons.GetOptions
 
 		internal bool MaybeAnOption(string arg)
 		{
-			return ((_parsingMode & OptionsParsingMode.Windows) > 0 && arg[0] == '/') ||
-					((_parsingMode & OptionsParsingMode.Linux) > 0 && arg[0] == '-');
+			return ((parsingMode & OptionsParsingMode.Windows) > 0 && arg[0] == '/') ||
+			((parsingMode & OptionsParsingMode.Linux) > 0 && arg[0] == '-');
 		}
 
-		private string _appAboutDetails = "Add a [assembly: Commons.About(\"Here goes the short about details\")] to your assembly";
-		private string _appAdditionalInfo = null;
-		private string[] _appAuthors;
-		private string _appCopyright = "Add a [assembly: AssemblyCopyright(\"(c)200n Here goes the copyright holder name\")] to your assembly";
-		private string _appDescription = "Add a [assembly: AssemblyDescription(\"Here goes the short description\")] to your assembly";
-		private string _appExeName;
-		private string _appReportBugsTo = null;
-		private string _appTitle = "Add a [assembly: AssemblyTitle(\"Here goes the application name\")] to your assembly";
-		private string _appUsageComplement = "Add a [assembly: Commons.UsageComplement(\"Here goes the usage clause complement\")] to your assembly";
-		private string _appVersion;
-		private MethodInfo _argumentProcessor = null;
-		private ArrayList _arguments = new ArrayList();
-		private ArrayList _argumentsTail = new ArrayList();
-		private bool _bannerAlreadyShown = false;
-		private bool _breakSingleDashManyLettersIntoManyOptions;
-		private bool _endOptionProcessingWithDoubleDash;
-		private Assembly _entry;
-		private bool _hasSecondLevelHelp = false;
-		private ArrayList _list = new ArrayList();
-		private Options _optionBundle = null;
-		private OptionsParsingMode _parsingMode;
+		private string appAboutDetails = null;
+		private string appAdditionalInfo = null;
+		private IList<string> appAuthors = new List<string>();
+		private string appCopyright = "Add a [assembly: AssemblyCopyright(\"(c)200n Here goes the copyright holder name\")] to your assembly";
+		private string appDescription = "Add a [assembly: AssemblyDescription(\"Here goes the short description\")] to your assembly";
+		private string appExeName;
+		private string appLicenseDetails = null;
+		private string appReportBugsTo = null;
+		private string appTitle = "Add a [assembly: AssemblyTitle(\"Here goes the application name\")] to your assembly";
+		private string appUsageComplement = null;
+		private string appVersion;
+		private MethodInfo argumentProcessor = null;
+		private ArrayList arguments = new ArrayList();
+		private ArrayList argumentsTail = new ArrayList();
+		private bool bannerAlreadyShown = false;
+		private bool breakSingleDashManyLettersIntoManyOptions;
+		private string CommandDescription;
+		private string CommandName;
+		private bool endOptionProcessingWithDoubleDash;
+		private Assembly entry;
+		private bool HasSecondLevelHelp = false;
+		private ArrayList list = new ArrayList();
+		private object optionBundle = null;
+		private OptionsParsingMode parsingMode;
 
 		private static int IndexOfAny(string where, params char[] what)
 		{
@@ -218,7 +244,7 @@ namespace Commons.GetOptions
 
 		private void AddArgumentProcessor(MemberInfo memberInfo)
 		{
-			if (_argumentProcessor != null)
+			if (argumentProcessor != null)
 				throw new NotSupportedException(translate("More than one argument processor method found"));
 
 			if ((memberInfo.MemberType == MemberTypes.Method && memberInfo is MethodInfo)) {
@@ -229,7 +255,7 @@ namespace Commons.GetOptions
 				if ((parameters == null) || (parameters.Length != 1) || (parameters[0].ParameterType.FullName != typeof(string).FullName))
 					throw new NotSupportedException(translate("Argument processor method must have a string parameter"));
 
-				_argumentProcessor = (MethodInfo)memberInfo;
+				argumentProcessor = (MethodInfo)memberInfo;
 			} else
 				throw new NotSupportedException(translate("Argument processor marked member isn't a method"));
 		}
@@ -247,46 +273,48 @@ namespace Commons.GetOptions
 
 		private void ExtractEntryAssemblyInfo(Type optionsType)
 		{
-			_entry = optionsType.Assembly;
-			if (_entry == this.GetType().Assembly) {
-				_entry = Assembly.GetEntryAssembly();
+			entry = optionsType.Assembly;
+			if (entry == this.GetType().Assembly) {
+				entry = Assembly.GetEntryAssembly();
 			}
 
-			_appExeName = _entry.GetName().Name;
-			_appVersion = _entry.GetName().Version.ToString();
-			GetAssemblyAttributeValue(typeof(AssemblyTitleAttribute), "Title", ref _appTitle);
-			GetAssemblyAttributeValue(typeof(AssemblyCopyrightAttribute), "Copyright", ref _appCopyright);
-			GetAssemblyAttributeValue(typeof(AssemblyDescriptionAttribute), "Description", ref _appDescription);
-			GetAssemblyAttributeValue(typeof(Commons.AboutAttribute), ref _appAboutDetails);
-			GetAssemblyAttributeValue(typeof(Commons.UsageComplementAttribute), ref _appUsageComplement);
-			GetAssemblyAttributeValue(typeof(Commons.AdditionalInfoAttribute), ref _appAdditionalInfo);
-			GetAssemblyAttributeValue(typeof(Commons.ReportBugsToAttribute), ref _appReportBugsTo);
-			_appAuthors = GetAssemblyAttributeStrings(typeof(AuthorAttribute));
-			if (_appAuthors.Length == 0) {
-				_appAuthors = new String[1];
-				_appAuthors[0] = "Add one or more [assembly: Commons.Author(\"Here goes the author name\")] to your assembly";
+			appExeName = entry.GetName().Name;
+			GetAssemblyAttributeValue(typeof(AssemblyInformationalVersionAttribute), "InformationalVersion", ref appVersion);
+			if (string.IsNullOrEmpty(appVersion)) {
+				appVersion = entry.GetName().Version.ToString();
+			}
+			GetAssemblyAttributeValue(typeof(AssemblyTitleAttribute), "Title", ref appTitle);
+			GetAssemblyAttributeValue(typeof(AssemblyCopyrightAttribute), "Copyright", ref appCopyright);
+			GetAssemblyAttributeValue(typeof(AssemblyDescriptionAttribute), "Description", ref appDescription);
+			GetAssemblyAttributeValue(typeof(Commons.LicenseAttribute), ref appLicenseDetails);
+			GetAssemblyAttributeValue(typeof(Commons.AboutAttribute), ref appAboutDetails);
+			GetAssemblyAttributeValue(typeof(Commons.UsageComplementAttribute), ref appUsageComplement);
+			GetAssemblyAttributeValue(typeof(Commons.AdditionalInfoAttribute), ref appAdditionalInfo);
+			GetAssemblyAttributeValue(typeof(Commons.ReportBugsToAttribute), ref appReportBugsTo);
+			var company = "";
+			GetAssemblyAttributeValue(typeof(AssemblyCompanyAttribute), "Company", ref company);
+			if (string.IsNullOrEmpty(company)) {
+				appAuthors.Add("Add one [assembly: AssemblyCompany(\"Here goes the comma-separated list of author names\")] to your assembly");
+			} else {
+				foreach (var author in company.Split(',').Select(s => s.Trim()))
+					appAuthors.Add(author);
 			}
 		}
 
 		private object[] GetAssemblyAttributes(Type type)
 		{
-			return _entry.GetCustomAttributes(type, false);
+			return entry.GetCustomAttributes(type, false);
 		}
 
-		private string[] GetAssemblyAttributeStrings(Type type)
+		private void GetAssemblyAttributeStrings(Type type, IList<string> list)
 		{
 			object[] result = GetAssemblyAttributes(type);
 
 			if ((result == null) || (result.Length == 0))
-				return new string[0];
-
-			int i = 0;
-			string[] var = new string[result.Length];
+				return;
 
 			foreach (object o in result)
-				var[i++] = o.ToString();
-
-			return var;
+				list.Add(o.ToString());
 		}
 
 		private void GetAssemblyAttributeValue(Type type, string propertyName, ref string var)
@@ -294,7 +322,8 @@ namespace Commons.GetOptions
 			object[] result = GetAssemblyAttributes(type);
 
 			if ((result != null) && (result.Length > 0))
-				var = (string)type.InvokeMember(propertyName, BindingFlags.Public | BindingFlags.GetField | BindingFlags.GetProperty | BindingFlags.Instance, null, result[0], new object[] { }); ;
+				var = (string)type.InvokeMember(propertyName, BindingFlags.Public | BindingFlags.GetField | BindingFlags.GetProperty | BindingFlags.Instance, null, result[0], new object[] { });
+			;
 		}
 
 		private void GetAssemblyAttributeValue(Type type, ref string var)
@@ -313,14 +342,14 @@ namespace Commons.GetOptions
 			foreach (string arg in ExpandResponseFiles(args)) {
 				if (arg.Length > 0) {
 					if (ParsingOptions) {
-						if (_endOptionProcessingWithDoubleDash && (arg == "--")) {
+						if (endOptionProcessingWithDoubleDash && (arg == "--")) {
 							ParsingOptions = false;
 							continue;
 						}
 
-						if ((_parsingMode & OptionsParsingMode.Linux) > 0 &&
-							 arg[0] == '-' && arg.Length > 1 && arg[1] != '-' &&
-							 _breakSingleDashManyLettersIntoManyOptions) {
+						if ((parsingMode & OptionsParsingMode.Linux) > 0 &&
+							arg[0] == '-' && arg.Length > 1 && arg[1] != '-' &&
+							breakSingleDashManyLettersIntoManyOptions) {
 							foreach (char c in arg.Substring(1)) // many single-letter options
 								result.Add("-" + c); // expand into individualized options
 							continue;
@@ -338,7 +367,7 @@ namespace Commons.GetOptions
 							continue;
 						}
 					} else {
-						_argumentsTail.Add(arg);
+						argumentsTail.Add(arg);
 						continue;
 					}
 
@@ -350,14 +379,19 @@ namespace Commons.GetOptions
 			return (string[])result.ToArray(typeof(string));
 		}
 
+		private string paddedCommandName()
+		{
+			if (string.IsNullOrEmpty(CommandName))
+				return string.Empty;
+			return CommandName + " ";
+		}
+
 		private void ProcessNonOption(string argument)
 		{
-			if (_optionBundle.VerboseParsingOfOptions)
-				Console.WriteLine(translate("argument") + " [" + argument + "]");
-			if (_argumentProcessor == null)
-				_arguments.Add(argument);
+			if (argumentProcessor == null)
+				arguments.Add(argument);
 			else
-				_argumentProcessor.Invoke(_optionBundle, new object[] { argument });
+				argumentProcessor.Invoke(optionBundle, new object[] { argument });
 		}
 
 		private void processResponseFile(string filename, ArrayList result)
@@ -408,9 +442,35 @@ namespace Commons.GetOptions
 		private void ShowAbout()
 		{
 			ShowTitleLines();
-			Console.WriteLine(translate(_appAboutDetails));
+			if (!string.IsNullOrEmpty(appAboutDetails))
+				Console.WriteLine(translate(appAboutDetails));
 			Console.Write(translate("Authors: "));
-			Console.WriteLine(string.Join(", ", _appAuthors));
+			Console.WriteLine(string.Join(", ", appAuthors.ToArray()));
+		}
+
+		private void ShowHelp(List<ICommand> commands)
+		{
+			ShowTitleLines();
+			Console.WriteLine(Usage);
+			int tabSize = 0;
+			foreach (var command in commands) {
+				int pos = command.Name.Length;
+				if (pos > tabSize)
+					tabSize = pos;
+			}
+			tabSize += 2;
+			foreach (var command in commands) {
+				Console.Write(command.Name.PadRight(tabSize));
+				string[] parts = command.Description.Split('\n');
+				Console.WriteLine(parts[0]);
+				if (parts.Length > 1) {
+					string spacer = new string(' ', tabSize);
+					for (int i = 1; i < parts.Length; i++) {
+						Console.Write(spacer);
+						Console.WriteLine(parts[i]);
+					}
+				}
+			}
 		}
 
 		private void ShowHelp(bool showSecondLevelHelp)
@@ -418,9 +478,9 @@ namespace Commons.GetOptions
 			ShowTitleLines();
 			Console.WriteLine(Usage);
 			Console.WriteLine(translate("Options:"));
-			ArrayList lines = new ArrayList(_list.Count);
+			ArrayList lines = new ArrayList(list.Count);
 			int tabSize = 0;
-			foreach (OptionDetails option in _list)
+			foreach (OptionDetails option in list)
 				if (option.SecondLevelHelp == showSecondLevelHelp) {
 					string[] optionLines = option.ToString().Split('\n');
 					foreach (string line in optionLines) {
@@ -443,18 +503,18 @@ namespace Commons.GetOptions
 					}
 				}
 			}
-			if (_appAdditionalInfo != null)
-				Console.WriteLine("\n{0}", translate(_appAdditionalInfo));
-			if (_appReportBugsTo != null)
+			if (appAdditionalInfo != null)
+				Console.WriteLine("\n{0}", translate(appAdditionalInfo));
+			if (appReportBugsTo != null)
 				Console.WriteLine(translate("\nPlease report bugs {0} <{1}>"),
-								  (_appReportBugsTo.IndexOf('@') > 0) ? translate("to") : translate("at"),
-								  translate(_appReportBugsTo));
+					(appReportBugsTo.IndexOf('@') > 0) ? translate("to") : translate("at"),
+					translate(appReportBugsTo));
 		}
 
 		private void ShowTitleLines()
 		{
 			ShowBanner();
-			Console.WriteLine(translate(_appDescription));
+			Console.WriteLine(translate(appDescription));
 			Console.WriteLine();
 		}
 
@@ -462,7 +522,7 @@ namespace Commons.GetOptions
 		{
 			Console.WriteLine(Usage);
 			Console.Write(translate("Short Options: "));
-			foreach (OptionDetails option in _list)
+			foreach (OptionDetails option in list)
 				Console.Write(option.ShortForm.Trim());
 			Console.WriteLine();
 		}

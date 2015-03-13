@@ -21,33 +21,20 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 
-namespace Commons
+namespace Commons.GetOptions
 {
-	[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
-	public class AuthorAttribute : System.Attribute
+	[AttributeUsage(AttributeTargets.Class)]
+	public class CommandProcessorAttribute : Attribute
 	{
+		public string Description;
 		public string Name;
-		public string SubProject;
 
-		public AuthorAttribute(string name)
+		public CommandProcessorAttribute(string name, string description)
 		{
 			Name = name;
-			SubProject = null;
-		}
-
-		public AuthorAttribute(string name, string subProject)
-		{
-			Name = name;
-			SubProject = subProject;
-		}
-
-		public override string ToString()
-		{
-			if (SubProject == null)
-				return Name;
-			else
-				return Name + " (" + SubProject + ")";
+			Description = description;
 		}
 	}
 }

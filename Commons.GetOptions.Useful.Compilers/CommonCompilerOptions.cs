@@ -54,7 +54,7 @@ namespace Commons.GetOptions.Useful.Compilers
 
 	public class CommonCompilerOptions : Options
 	{
-		[Option("Allows unsafe code", "unsafe", SecondLevelHelp = true)]
+		[Option("Allows unsafe code", Name = "unsafe", SecondLevelHelp = true)]
 		public bool AllowUnsafeCode = false;
 
 		public ArrayList AssembliesToReference = new ArrayList();
@@ -67,10 +67,10 @@ namespace Commons.GetOptions.Useful.Compilers
 
 		// support for the Compact Framework
 		//------------------------------------------------------------------
-		//		[Option("[NOT IMPLEMENTED YET]Sets the compiler to TargetFileType the Compact Framework", "netcf")]
+		//		[Option("[NOT IMPLEMENTED YET]Sets the compiler to TargetFileType the Compact Framework", Name = "netcf")]
 		public bool CompileForCompactFramework = false;
 
-		//		[Option("[NOT IMPLEMENTED YET]Create bug report {file}", "bugreport")]
+		//		[Option("[NOT IMPLEMENTED YET]Create bug report {file}", Name = "bugreport")]
 		public string CreateBugReport;
 
 		public ArrayList DebugListOfArguments = new ArrayList();
@@ -86,7 +86,7 @@ namespace Commons.GetOptions.Useful.Compilers
 		//		[Option("[NOT IMPLEMENTED YET]Delay-sign the assembly using only the public portion of the strong name key", VBCStyleBoolean = true)]
 		public bool delaysign;
 
-		[Option("Do not display compiler copyright banner", "nologo")]
+		[Option("Do not display compiler copyright banner", Name = "nologo")]
 		public bool DontShowBanner = false;
 
 		// resource options
@@ -105,30 +105,29 @@ namespace Commons.GetOptions.Useful.Compilers
 
 		public ArrayList LinkedResources = new ArrayList();
 
-		[Option("Specifies the {name} of the Class or Module that contains Sub Main \tor inherits from System.Windows.Forms.Form.\tNeeded to select among many entry-points for a program (target=exe|winexe)",
-			'm', "main")]
+		[Option("Specifies the {name} of the Class or Module that contains Sub Main \tor inherits from System.Windows.Forms.Form.\tNeeded to select among many entry-points for a program (target=exe|winexe)", ShortForm = 'm', Name = "main")]
 		public string MainClassName = null;
 
 		public ArrayList NetModulesToAdd = new ArrayList();
 
-		[Option("Disables implicit references to assemblies", "noconfig", SecondLevelHelp = true)]
+		[Option("Disables implicit references to assemblies", Name = "noconfig", SecondLevelHelp = true)]
 		public bool NoConfig = false;
 
-		[Option("Don\'t assume the standard library", "nostdlib", SecondLevelHelp = true)]
+		[Option("Don\'t assume the standard library", Name = "nostdlib", SecondLevelHelp = true)]
 		public bool NoStandardLibraries = false;
 
-		//		[Option("[NOT IMPLEMENTED YET]Enable optimizations", "optimize", VBCStyleBoolean = true)]
+		//		[Option("[NOT IMPLEMENTED YET]Enable optimizations", Name = "optimize", VBCStyleBoolean = true)]
 		public bool Optimize = false;
 
-		[Option("[IGNORED] Emit compiler output in UTF8 character encoding", "utf8output", SecondLevelHelp = true, VBCStyleBoolean = true)]
+		[Option("[IGNORED] Emit compiler output in UTF8 character encoding", Name = "utf8output", SecondLevelHelp = true, VBCStyleBoolean = true)]
 		public bool OutputInUTF8;
 
 		public ArrayList PathsToSearchForLibraries = new ArrayList();
 
-		[Option("Specifies the root {namespace} for all type declarations", "rootnamespace", SecondLevelHelp = true)]
+		[Option("Specifies the root {namespace} for all type declarations", Name = "rootnamespace", SecondLevelHelp = true)]
 		public string RootNamespace = null;
 
-		//		[Option("[NOT IMPLEMENTED YET]Specifies the {path} to the location of mscorlib.dll and microsoft.visualbasic.dll", "sdkpath")]
+		//		[Option("[NOT IMPLEMENTED YET]Specifies the {path} to the location of mscorlib.dll and microsoft.visualbasic.dll", Name = "sdkpath")]
 		public string SDKPath = null;
 
 		public ArrayList SourceFilesToCompile = new ArrayList();
@@ -136,23 +135,23 @@ namespace Commons.GetOptions.Useful.Compilers
 		// Compiler output options
 		//------------------------------------------------------------------
 		//TODO: Correct semantics
-		[Option("Commands the compiler to show only error messages for syntax-related errors and warnings", 'q', "quiet", SecondLevelHelp = true)]
+		[Option("Commands the compiler to show only error messages for syntax-related errors and warnings", ShortForm = 'q', Name = "quiet", SecondLevelHelp = true)]
 		public bool SuccintErrorDisplay = false;
 
 		// Output file options
 		//------------------------------------------------------------------
 		public TargetType TargetFileType = TargetType.Exe;
 
-		[Option("Display verbose messages", 'v', "verbose", SecondLevelHelp = true)]
+		[Option("Display verbose messages", ShortForm = 'v', Name = "verbose", SecondLevelHelp = true)]
 		public bool Verbose = false;
 
-		[Option("Emit full debugging information", 'g', "debug", VBCStyleBoolean = true)]
+		[Option("Emit full debugging information", ShortForm = 'g', Name = "debug", VBCStyleBoolean = true)]
 		public bool WantDebuggingSupport = false;
 
-		[Option("Sets warning {level} (the highest is 4, the default)", "wlevel", SecondLevelHelp = true)]
+		[Option("Sets warning {level} (the highest is 4, the default)", Name = "wlevel", SecondLevelHelp = true)]
 		public int WarningLevel = 4;
 
-		[Option("Treat warnings as errors", "warnaserror", SecondLevelHelp = true)]
+		[Option("Treat warnings as errors", Name = "warnaserror", SecondLevelHelp = true)]
 		public bool WarningsAreErrors = false;
 
 		public ArrayList Win32Icons = new ArrayList();
@@ -175,28 +174,34 @@ namespace Commons.GetOptions.Useful.Compilers
 			PathsToSearchForLibraries.Add(Directory.GetCurrentDirectory());
 		}
 
-		[Option("List of directories to search for referenced assemblies. \t{path-list}:path,...", "libpath", "lib")]
+		[Option("List of directories to search for referenced assemblies. \t{path-list}:path,...", Name = "libpath", AlternateForm = "lib")]
 		public string AddedLibPath { set { foreach (string path in value.Split(',')) PathsToSearchForLibraries.Add(path); } }
 
-		[Option(-1, "Adds the specified file as a linked assembly resource. \t{details}:file[,id[,public|private]]", "linkresource", "linkres")]
+		[Option("Adds the specified file as a linked assembly resource. \t{details}:file[,id[,public|private]]",
+			MaxOccurs = -1, Name = "linkresource", AlternateForm = "linkres")]
 		public string AddedLinkresource { set { LinkedResources.Add(value); } }
 
 		// input file options
 		//------------------------------------------------------------------
-		[Option(-1, "Imports all type information from files in the module-list. {module-list}:module,...", "addmodule")]
+		[Option("Imports all type information from files in the module-list. {module-list}:module,...",
+	MaxOccurs = -1, Name = "addmodule")]
 		public string AddedModule { set { foreach (string module in value.Split(',')) NetModulesToAdd.Add(module); } }
 
-		[Option(-1, "References metadata from the specified assembly-list. \t{assembly-list}:assembly,...", 'r', "reference")]
+		[Option("References metadata from the specified assembly-list. \t{assembly-list}:assembly,...",
+	MaxOccurs = -1, ShortForm = 'r', Name = "reference")]
 		public string AddedReference { set { foreach (string assembly in value.Split(',')) AssembliesToReference.Add(assembly); } }
 
 		//TODO: support -res:file[,id[,public|private]] what depends on changes at Mono.GetOptions
-		[Option(-1, "Adds the specified file as an embedded assembly resource. \t{details}:file[,id[,public|private]]", "resource", "res")]
+		[Option("Adds the specified file as an embedded assembly resource. \t{details}:file[,id[,public|private]]",
+	MaxOccurs = -1, Name = "resource", AlternateForm = "res")]
 		public string AddedResource { set { EmbeddedResources.Add(value); } }
 
-		//		[Option(-1, "[NOT IMPLEMENTED YET]Specifies a Win32 icon {file} (.ico) for the default Win32 resources", "win32icon")]
+		//		[Option("[NOT IMPLEMENTED YET]Specifies a Win32 icon {file} (.ico) for the default Win32 resources",
+		//	MaxOccurs = -1, Name = "win32icon")]
 		public string AddedWin32icon { set { Win32Icons.Add(value); } }
 
-		//		[Option(-1, "[NOT IMPLEMENTED YET]Specifies a Win32 resource {file} (.res)", "win32resource")]
+		//		[Option("[NOT IMPLEMENTED YET]Specifies a Win32 resource {file} (.res)",
+		//	MaxOccurs = -1, Name = "win32resource")]
 		public string AddedWin32resource { set { Win32Resources.Add(value); } }
 
 		public virtual string[] AssembliesToReferenceSoftly
@@ -210,7 +215,8 @@ namespace Commons.GetOptions.Useful.Compilers
 
 		public bool BeQuiet { get { return DontShowBanner || SuccintErrorDisplay; } }
 
-		[Option(-1, "Select codepage by {ID} (number, 'utf8' or 'reset') to process following source files", "codepage")]
+		[Option("Select codepage by {ID} (number, 'utf8' or 'reset') to process following source files",
+	MaxOccurs = -1, Name = "codepage")]
 		public string CurrentCodepage
 		{
 			set
@@ -238,7 +244,7 @@ namespace Commons.GetOptions.Useful.Compilers
 			}
 		}
 
-		[Option("Emit full debugging information (default)", "debug:full", SecondLevelHelp = true)]
+		[Option("Emit full debugging information (default)", Name = "debug:full", SecondLevelHelp = true)]
 		public bool debugfull
 		{
 			set
@@ -249,7 +255,7 @@ namespace Commons.GetOptions.Useful.Compilers
 			}
 		}
 
-		[Option("Emit debug symbols file only", "debug:pdbonly", SecondLevelHelp = true)]
+		[Option("Emit debug symbols file only", Name = "debug:pdbonly", SecondLevelHelp = true)]
 		public bool debugpdbonly
 		{
 			set
@@ -260,7 +266,8 @@ namespace Commons.GetOptions.Useful.Compilers
 			}
 		}
 
-		[Option(-1, "Declares global conditional compilation symbol(s). {symbol-list}:name=value,...", 'd', "define")]
+		[Option("Declares global conditional compilation symbol(s). {symbol-list}:name=value,...",
+	MaxOccurs = -1, ShortForm = 'd', Name = "define")]
 		public string DefineSymbol
 		{
 			set
@@ -275,7 +282,8 @@ namespace Commons.GetOptions.Useful.Compilers
 			}
 		}
 
-		[Option(-1, "Declare global Imports for listed namespaces. {import-list}:namespace,...", "imports")]
+		[Option("Declare global Imports for listed namespaces. {import-list}:namespace,...",
+	MaxOccurs = -1, Name = "imports")]
 		public string ImportNamespaces
 		{
 			set
@@ -302,10 +310,10 @@ namespace Commons.GetOptions.Useful.Compilers
 
 		// errors and warnings options
 		//------------------------------------------------------------------
-		[Option("Disable warnings", "nowarn", SecondLevelHelp = true)]
+		[Option("Disable warnings", Name = "nowarn", SecondLevelHelp = true)]
 		public bool NoWarnings { set { if (value) WarningLevel = 0; } }
 
-		[Option("Specifies the output {file} name", 'o', "out")]
+		[Option("Specifies the output {file} name", ShortForm = 'o', Name = "out")]
 		public string OutputFileName
 		{
 			set { _outputFileName = value; }
@@ -327,7 +335,7 @@ namespace Commons.GetOptions.Useful.Compilers
 			}
 		}
 
-		[Option("Displays time stamps of various compiler events", "timestamp", SecondLevelHelp = true)]
+		[Option("Displays time stamps of various compiler events", Name = "timestamp", SecondLevelHelp = true)]
 		public virtual bool PrintTimeStamps
 		{
 			set
@@ -424,7 +432,7 @@ namespace Commons.GetOptions.Useful.Compilers
 			return errors == 0;
 		}
 
-		//		[Option("[NOT IMPLEMENTED YET]Include all files in the current directory and subdirectories according to the {wildcard}", "recurse")]
+		//		[Option("[NOT IMPLEMENTED YET]Include all files in the current directory and subdirectories according to the {wildcard}", Name = "recurse")]
 		public WhatToDoNext Recurse(string wildcard)
 		{
 			//AddFiles (DirName, true); // TODO wrong semantics
@@ -482,27 +490,29 @@ namespace Commons.GetOptions.Useful.Compilers
 			return true;
 		}
 
-		[Option(-1, "References packages listed. {packagelist}=package,...", "pkg")]
+		[Option("References packages listed. {packagelist}=package,...",
+	MaxOccurs = -1, Name = "pkg")]
 		public WhatToDoNext ReferenceSomePackage(string packageName)
 		{
 			return ReferencePackage(packageName) ? WhatToDoNext.GoAhead : WhatToDoNext.AbandonProgram;
 		}
 
-		[Option("Debugger {arguments}", "debug-args", SecondLevelHelp = true)]
+		[Option("Debugger {arguments}", Name = "debug-args", SecondLevelHelp = true)]
 		public WhatToDoNext SetDebugArgs(string args)
 		{
 			DebugListOfArguments.AddRange(args.Split(','));
 			return WhatToDoNext.GoAhead;
 		}
 
-		[Option(-1, "Ignores warning number {XXXX}", "ignorewarn", SecondLevelHelp = true)]
+		[Option("Ignores warning number {XXXX}",
+	MaxOccurs = -1, Name = "ignorewarn", SecondLevelHelp = true)]
 		public WhatToDoNext SetIgnoreWarning(int warningNumber)
 		{
 			_warningsToIgnore.Add(warningNumber);
 			return WhatToDoNext.GoAhead;
 		}
 
-		[Option("Specifies the target {type} for the output file (exe [default], winexe, library, module)", 't', "target")]
+		[Option("Specifies the target {type} for the output file (exe [default], winexe, library, module)", ShortForm = 't', Name = "target")]
 		public WhatToDoNext SetTarget(string type)
 		{
 			switch (type.ToLower()) {
@@ -741,20 +751,20 @@ namespace Commons.GetOptions.Useful.Compilers
 
 	public class CommonCompilerOptions2 : CommonCompilerOptions
 	{
-		[Option("Filealign internal blocks to the {blocksize} in bytes. Valid values are 512, 1024, 2048, 4096, and 8192.", "filealign", SecondLevelHelp = true)]
+		[Option("Filealign internal blocks to the {blocksize} in bytes. Valid values are 512, 1024, 2048, 4096, and 8192.", Name = "filealign", SecondLevelHelp = true)]
 		public int FileAlignBlockSize = 0;
 
-		[Option("Generate documentation from xml commments.", "doc", SecondLevelHelp = true, VBCStyleBoolean = true)]
+		[Option("Generate documentation from xml commments.", Name = "doc", SecondLevelHelp = true, VBCStyleBoolean = true)]
 		public bool GenerateXmlDocumentation = false;
 
 		// 0 means use appropriate (not fixed) default
-		[Option("Generate documentation from xml commments to an specific {file}.", "docto", SecondLevelHelp = true)]
+		[Option("Generate documentation from xml commments to an specific {file}.", Name = "docto", SecondLevelHelp = true)]
 		public string GenerateXmlDocumentationToFileName = null;
 
-		[Option("What {action} (prompt | send | none) should be done when an internal compiler error occurs.\tThe default is none what just prints the error data in the compiler output", "errorreport", SecondLevelHelp = true)]
+		[Option("What {action} (prompt | send | none) should be done when an internal compiler error occurs.\tThe default is none what just prints the error data in the compiler output", Name = "errorreport", SecondLevelHelp = true)]
 		public InternalCompilerErrorReportAction HowToReportErrors = InternalCompilerErrorReportAction.none;
 
-		[Option("Specify target CPU platform {ID}. ID can be x86, Itanium, x64 (AMD 64bit) or anycpu (the default).", "platform", SecondLevelHelp = true)]
+		[Option("Specify target CPU platform {ID}. ID can be x86, Itanium, x64 (AMD 64bit) or anycpu (the default).", Name = "platform", SecondLevelHelp = true)]
 		public string TargetPlatform;
 	}
 
