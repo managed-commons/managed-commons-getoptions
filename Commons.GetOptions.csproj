@@ -49,7 +49,6 @@
     <Compile Include="Commons\IsPartOfPackageAttribute.cs" />
     <Compile Include="Commons\ReportBugsToAttribute.cs" />
     <Compile Include="Commons\UsageComplementAttribute.cs" />
-    <Compile Include="Commons.GetOptions.Useful.Compilers\CommonCompilerOptions.cs" />
     <Compile Include="Commons.GetOptions\CommandProcessorAttribute.cs" />
     <Compile Include="Commons.GetOptions\Commands.cs" />
   </ItemGroup>

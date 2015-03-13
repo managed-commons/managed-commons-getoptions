@@ -1,4 +1,4 @@
-// Commons.GetOptions
+// Commons.GetOptions.ForCompilers
 //
 // Copyright (c) 2002-2015 Rafael 'Monoman' Teixeira, Managed Commons Team
 //
@@ -27,8 +27,9 @@ using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using Commons.GetOptions;
 
-namespace Commons.GetOptions.Useful.Compilers
+namespace Commons.Compilers
 {
 	public enum InternalCompilerErrorReportAction
 	{
@@ -177,23 +178,19 @@ namespace Commons.GetOptions.Useful.Compilers
 		[Option("List of directories to search for referenced assemblies. \t{path-list}:path,...", Name = "libpath", AlternateForm = "lib")]
 		public string AddedLibPath { set { foreach (string path in value.Split(',')) PathsToSearchForLibraries.Add(path); } }
 
-		[Option("Adds the specified file as a linked assembly resource. \t{details}:file[,id[,public|private]]",
-			MaxOccurs = -1, Name = "linkresource", AlternateForm = "linkres")]
+		[Option("Adds the specified file as a linked assembly resource. \t{details}:file[,id[,public|private]]", MaxOccurs = -1, Name = "linkresource", AlternateForm = "linkres")]
 		public string AddedLinkresource { set { LinkedResources.Add(value); } }
 
 		// input file options
 		//------------------------------------------------------------------
-		[Option("Imports all type information from files in the module-list. {module-list}:module,...",
-	MaxOccurs = -1, Name = "addmodule")]
+		[Option("Imports all type information from files in the module-list. {module-list}:module,...", MaxOccurs = -1, Name = "addmodule")]
 		public string AddedModule { set { foreach (string module in value.Split(',')) NetModulesToAdd.Add(module); } }
 
-		[Option("References metadata from the specified assembly-list. \t{assembly-list}:assembly,...",
-	MaxOccurs = -1, ShortForm = 'r', Name = "reference")]
+		[Option("References metadata from the specified assembly-list. \t{assembly-list}:assembly,...", MaxOccurs = -1, ShortForm = 'r', Name = "reference")]
 		public string AddedReference { set { foreach (string assembly in value.Split(',')) AssembliesToReference.Add(assembly); } }
 
 		//TODO: support -res:file[,id[,public|private]] what depends on changes at Mono.GetOptions
-		[Option("Adds the specified file as an embedded assembly resource. \t{details}:file[,id[,public|private]]",
-	MaxOccurs = -1, Name = "resource", AlternateForm = "res")]
+		[Option("Adds the specified file as an embedded assembly resource. \t{details}:file[,id[,public|private]]", MaxOccurs = -1, Name = "resource", AlternateForm = "res")]
 		public string AddedResource { set { EmbeddedResources.Add(value); } }
 
 		//		[Option("[NOT IMPLEMENTED YET]Specifies a Win32 icon {file} (.ico) for the default Win32 resources",
@@ -215,8 +212,7 @@ namespace Commons.GetOptions.Useful.Compilers
 
 		public bool BeQuiet { get { return DontShowBanner || SuccintErrorDisplay; } }
 
-		[Option("Select codepage by {ID} (number, 'utf8' or 'reset') to process following source files",
-	MaxOccurs = -1, Name = "codepage")]
+		[Option("Select codepage by {ID} (number, 'utf8' or 'reset') to process following source files", MaxOccurs = -1, Name = "codepage")]
 		public string CurrentCodepage
 		{
 			set
@@ -266,8 +262,7 @@ namespace Commons.GetOptions.Useful.Compilers
 			}
 		}
 
-		[Option("Declares global conditional compilation symbol(s). {symbol-list}:name=value,...",
-	MaxOccurs = -1, ShortForm = 'd', Name = "define")]
+		[Option("Declares global conditional compilation symbol(s). {symbol-list}:name=value,...", MaxOccurs = -1, ShortForm = 'd', Name = "define")]
 		public string DefineSymbol
 		{
 			set
@@ -282,8 +277,7 @@ namespace Commons.GetOptions.Useful.Compilers
 			}
 		}
 
-		[Option("Declare global Imports for listed namespaces. {import-list}:namespace,...",
-	MaxOccurs = -1, Name = "imports")]
+		[Option("Declare global Imports for listed namespaces. {import-list}:namespace,...", MaxOccurs = -1, Name = "imports")]
 		public string ImportNamespaces
 		{
 			set
@@ -490,8 +484,7 @@ namespace Commons.GetOptions.Useful.Compilers
 			return true;
 		}
 
-		[Option("References packages listed. {packagelist}=package,...",
-	MaxOccurs = -1, Name = "pkg")]
+		[Option("References packages listed. {packagelist}=package,...", MaxOccurs = -1, Name = "pkg")]
 		public WhatToDoNext ReferenceSomePackage(string packageName)
 		{
 			return ReferencePackage(packageName) ? WhatToDoNext.GoAhead : WhatToDoNext.AbandonProgram;
@@ -504,8 +497,7 @@ namespace Commons.GetOptions.Useful.Compilers
 			return WhatToDoNext.GoAhead;
 		}
 
-		[Option("Ignores warning number {XXXX}",
-	MaxOccurs = -1, Name = "ignorewarn", SecondLevelHelp = true)]
+		[Option("Ignores warning number {XXXX}", MaxOccurs = -1, Name = "ignorewarn", SecondLevelHelp = true)]
 		public WhatToDoNext SetIgnoreWarning(int warningNumber)
 		{
 			_warningsToIgnore.Add(warningNumber);
