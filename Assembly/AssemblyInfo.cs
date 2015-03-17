@@ -32,9 +32,9 @@ using Commons;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: CLSCompliant(true)]
-[assembly: AssemblyVersion("1.1.2015.2")]
-[assembly: AssemblyFileVersion("1.1.2015.2")]
+[assembly: AssemblyVersion("1.1.2015.3")]
+[assembly: AssemblyFileVersion("1.1.2015.3")]
 [assembly: AssemblyProduct("Managed.Commons.GetOptions")]
-[assembly: AssemblyInformationalVersion("1.1.0")]
+[assembly: AssemblyInformationalVersion("1.1.1")]
 
 [assembly: License(LicenseType.MIT)]
