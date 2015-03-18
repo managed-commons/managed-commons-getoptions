@@ -1,4 +1,4 @@
-// Commons.GetOptions
+﻿// Commons.GetOptions.ForCompilers
 //
 // Copyright (c) 2002-2015 Rafael 'Monoman' Teixeira, Managed Commons Team
 //
@@ -21,32 +21,23 @@
 // SOFTWARE.
 
 using System;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using Commons;
 
-namespace Commons.GetOptions
-{
-	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method)]
-	public class OptionAttribute : Attribute
-	{
-		public OptionAttribute(string shortDescription)
-		{
-			Description = shortDescription;
-			ShortForm = default(char);
-			MaxOccurs = 1;
-		}
+[assembly: AssemblyTitle("Commons.GetOptions.ForCompilers")]
+[assembly: AssemblyDescription("Command line arguments parsing library for managed compilers")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("Rafael 'Monoman' Teixeira, Managed Commons Team")]
+[assembly: AssemblyCopyright("Copyright ©2002-2015 Rafael 'Monoman' Teixeira, Managed Commons Team")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+[assembly: CLSCompliant(true)]
+[assembly: AssemblyVersion("1.0.0")]
+[assembly: AssemblyFileVersion("1.0.0")]
+[assembly: AssemblyProduct("Managed.Commons.GetOptions.ForCompilers")]
+[assembly: AssemblyInformationalVersion("1.0")]
+[assembly: ComVisible(false)]
+[assembly: Guid("42c07ee4-628b-4178-818a-d0379b12da05")]
 
-		public string AlternateForm { get; set; }
-
-		public string Description { get; set; }
-
-		// negative means there is no limit
-		public int MaxOccurs { get; set; }
-
-		public string Name { get; set; }
-
-		public bool SecondLevelHelp { get; set; }
-
-		public char ShortForm { get; set; }
-
-		public bool VBCStyleBoolean { get; set; }
-	}
-}
+[assembly: License(LicenseType.MIT)]

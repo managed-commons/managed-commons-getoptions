@@ -1,4 +1,4 @@
-// Commons.GetOptions
+﻿// Commons.GetOptions
 //
 // Copyright (c) 2002-2015 Rafael 'Monoman' Teixeira, Managed Commons Team
 //
@@ -20,33 +20,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using Commons;
 
-namespace Commons.GetOptions
-{
-	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method)]
-	public class OptionAttribute : Attribute
-	{
-		public OptionAttribute(string shortDescription)
-		{
-			Description = shortDescription;
-			ShortForm = default(char);
-			MaxOccurs = 1;
-		}
+[assembly: AssemblyTitle("TestApp")]
+[assembly: AssemblyDescription("Exercises Commons.GetOptions features")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("Rafael 'Monoman' Teixeira, Managed Commons Team")]
+[assembly: AssemblyProduct("Commons.GetOptions")]
+[assembly: AssemblyCopyright("Copyright ©2015 Rafael 'Monoman' Teixeira, Managed Commons Team")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
 
-		public string AlternateForm { get; set; }
+[assembly: AssemblyVersion("2.0.1")]
+[assembly: AssemblyFileVersion("2.0.0")]
+[assembly: AssemblyInformationalVersion("2.0.0")]
 
-		public string Description { get; set; }
-
-		// negative means there is no limit
-		public int MaxOccurs { get; set; }
-
-		public string Name { get; set; }
-
-		public bool SecondLevelHelp { get; set; }
-
-		public char ShortForm { get; set; }
-
-		public bool VBCStyleBoolean { get; set; }
-	}
-}

@@ -1,5 +1,5 @@
 Commons.GetOptions
-============================
+==================
 
 [![Join the chat at https://gitter.im/monoman/managed-commons-getoptions](http://www.monobrasil.com.br/chat.svg)](https://gitter.im/monoman/managed-commons-getoptions?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 

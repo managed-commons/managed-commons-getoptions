@@ -39,7 +39,12 @@
   <ItemGroup>
     <Compile Include="Commons.GetOptions\ArgumentProcessorAttribute.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="Commons.GetOptions\Commands.cs" />
     <Compile Include="Commons.GetOptions\KillInheritedOptionAttribute.cs" />
+    <Compile Include="Commons.GetOptions\OptionsContext.cs" />
+    <Compile Include="Commons.GetOptions\OptionsWithSecondLevel.cs" />
+    <Compile Include="Commons\AssemblyExtensions.cs" />
+    <Compile Include="Commons\AssemblyInformation.cs" />
     <Compile Include="Commons\LicenseAttribute.cs" />
     <Compile Include="Commons.GetOptions\OptionAttribute.cs" />
     <Compile Include="Commons.GetOptions\OptionDetails.cs" />
@@ -50,8 +55,8 @@
     <Compile Include="Commons\AdditionalInfoAttribute.cs" />
     <Compile Include="Commons\IsPartOfPackageAttribute.cs" />
     <Compile Include="Commons\ReportBugsToAttribute.cs" />
+    <Compile Include="Commons\TranslationService.cs" />
     <Compile Include="Commons\UsageComplementAttribute.cs" />
-    <Compile Include="Commons.GetOptions.Useful.Compilers\CommonCompilerOptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Commons.GetOptions.nuspec" />

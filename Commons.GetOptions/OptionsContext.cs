@@ -1,4 +1,4 @@
-// Commons.GetOptions
+﻿// Commons.GetOptions
 //
 // Copyright (c) 2002-2015 Rafael 'Monoman' Teixeira, Managed Commons Team
 //
@@ -21,33 +21,42 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace Commons
+namespace Commons.GetOptions
 {
-	[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
-	public class AuthorAttribute : System.Attribute
+	public class OptionsContext
 	{
-		public string Name;
-		public string SubProject;
+		public bool BreakSingleDashManyLettersIntoManyOptions = false;
+		public bool DontSplitOnCommas = false;
+		public bool EndOptionProcessingWithDoubleDash = true;
+		public OptionsParsingMode ParsingMode = OptionsParsingMode.Both;
+		public ErrorReporter ReportError = DefaultErrorReporter;
 
-		public AuthorAttribute(string name)
+		public bool RunningOnWindows
 		{
-			Name = name;
-			SubProject = null;
+			get
+			{
+				var platform = Environment.OSVersion.Platform;
+				return ((platform != PlatformID.Unix) && (platform != PlatformID.MacOSX));
+			}
 		}
 
-		public AuthorAttribute(string name, string subProject)
+		public static void DefaultErrorReporter(int number, string message)
 		{
-			Name = name;
-			SubProject = subProject;
-		}
-
-		public override string ToString()
-		{
-			if (SubProject == null)
-				return Name;
+			if (number > 0)
+				Console.WriteLine("Error {0}: {1}", number, message);
 			else
-				return Name + " (" + SubProject + ")";
+				Console.WriteLine("Error: {0}", message);
+		}
+
+		public static string[] Exit(int exitCode)
+		{
+			Environment.Exit(exitCode);
+			return null;
 		}
 	}
+
+	public delegate void ErrorReporter(int num, string msg);
 }

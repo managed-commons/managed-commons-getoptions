@@ -21,167 +21,76 @@
 // SOFTWARE.
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Commons.GetOptions
 {
 	public class Options
 	{
-		public bool BreakSingleDashManyLettersIntoManyOptions;
-		public bool DontSplitOnCommas;
-		public bool EndOptionProcessingWithDoubleDash;
-		public OptionsParsingMode ParsingMode;
 		public string[] RemainingArguments;
-		public ErrorReporter ReportError;
 
-		public Options()
-			: this(null)
+		public Options(OptionsContext context, string[] args = null)
 		{
-		}
-
-		public Options(string[] args)
-			: this(args, OptionsParsingMode.Both, false, true, false, null)
-		{
-		}
-
-		public Options(string[] args,
-					   OptionsParsingMode parsingMode,
-					   bool breakSingleDashManyLettersIntoManyOptions,
-					   bool endOptionProcessingWithDoubleDash,
-					   bool dontSplitOnCommas) :
-			this(args, OptionsParsingMode.Both, false, true, false, null)
-		{ }
-
-		public Options(string[] args,
-					   OptionsParsingMode parsingMode,
-					   bool breakSingleDashManyLettersIntoManyOptions,
-					   bool endOptionProcessingWithDoubleDash,
-					   bool dontSplitOnCommas,
-					   ErrorReporter reportError)
-		{
-			ParsingMode = parsingMode;
-			BreakSingleDashManyLettersIntoManyOptions = breakSingleDashManyLettersIntoManyOptions;
-			EndOptionProcessingWithDoubleDash = endOptionProcessingWithDoubleDash;
-			DontSplitOnCommas = dontSplitOnCommas;
-			if (reportError == null)
-				ReportError = new ErrorReporter(DefaultErrorReporter);
-			else
-				ReportError = reportError;
 			InitializeOtherDefaults();
+			Context = context;
+			OptionParser = new OptionList(this, context);
+			OptionParser.AdditionalBannerInfo = AdditionalBannerInfo;
 			if (args != null)
-				ProcessArgs(args);
+				ProcessArgs(args, OptionsContext.Exit);
 		}
 
-		public virtual string AdditionalBannerInfo { get { return null; } }
+		public string FifthArgument { get { return (RemainingArguments.Length > 4) ? RemainingArguments[4] : null; } }
 
-		[Option("Show debugging info while processing options", '~', "debugoptions", SecondLevelHelp = true)]
-		public bool DebuggingOfOptions
-		{
-			set
-			{
-				_debuggingOfOptions = value;
-				if (value) {
-					Console.WriteLine("ParsingMode = {0}", ParsingMode);
-					Console.WriteLine("BreakSingleDashManyLettersIntoManyOptions = {0}", BreakSingleDashManyLettersIntoManyOptions);
-					Console.WriteLine("EndOptionProcessingWithDoubleDash = {0}", EndOptionProcessingWithDoubleDash);
-					Console.WriteLine("DontSplitOnCommas = {0}", DontSplitOnCommas);
-				}
-			}
-			get { return _debuggingOfOptions; }
-		}
+		public string FirstArgument { get { return (RemainingArguments.Length > 0) ? RemainingArguments[0] : null; } }
 
-		public string FifthArgument { get { return (_arguments.Count > 4) ? (string)_arguments[4] : null; } }
+		public string FourthArgument { get { return (RemainingArguments.Length > 3) ? RemainingArguments[3] : null; } }
 
-		public string FirstArgument { get { return (_arguments.Count > 0) ? (string)_arguments[0] : null; } }
+		public bool GotNoArguments { get { return RemainingArguments.Length == 0; } }
 
-		public string FourthArgument { get { return (_arguments.Count > 3) ? (string)_arguments[3] : null; } }
+		public string SecondArgument { get { return (RemainingArguments.Length > 1) ? RemainingArguments[1] : null; } }
 
-		public bool GotNoArguments { get { return _arguments.Count == 0; } }
+		public string ThirdArgument { get { return (RemainingArguments.Length > 2) ? RemainingArguments[2] : null; } }
 
-		public bool RunningOnWindows
-		{
-			get
-			{
-				// check for non-Unix platforms - see FAQ for more details
-				// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
-				int platform = (int)Environment.OSVersion.Platform;
-				return ((platform != 4) && (platform != 128));
-			}
-		}
-
-		public string SecondArgument { get { return (_arguments.Count > 1) ? (string)_arguments[1] : null; } }
-
-		public string ThirdArgument { get { return (_arguments.Count > 2) ? (string)_arguments[2] : null; } }
-
-		[Option("Show verbose parsing of options", '.', "verbosegetoptions", SecondLevelHelp = true)]
-		public bool VerboseParsingOfOptions
-		{
-			set { _verboseParsingOfOptions = value; }
-			get { return _verboseParsingOfOptions; }
-		}
-
-		[ArgumentProcessor]
-		public virtual void DefaultArgumentProcessor(string argument)
-		{
-			_arguments.Add(argument);
-		}
-
-		[Option("Display version and licensing information", 'V', "version")]
+		[Option("Display version and licensing information", ShortForm = 'V', Name = "version")]
 		public virtual WhatToDoNext DoAbout()
 		{
-			return _optionParser.DoAbout();
+			return OptionParser.DoAbout();
 		}
 
-		[Option("Show this help list", '?', "help")]
+		[Option("Show this help list", ShortForm = '?', Name = "help")]
 		public virtual WhatToDoNext DoHelp()
 		{
-			return _optionParser.DoHelp();
+			return OptionParser.DoHelp();
 		}
 
-		[Option("Show an additional help list", "help2")]
-		public virtual WhatToDoNext DoHelp2()
+		public void DoUsage()
 		{
-			return _optionParser.DoHelp2();
+			OptionParser.DoUsage();
 		}
 
-		[Option("Show usage syntax and exit", "usage")]
-		public virtual WhatToDoNext DoUsage()
+		public String[] ProcessArgs(string[] args, Func<int, string[]> exitFunc)
 		{
-			return _optionParser.DoUsage();
+			return (RemainingArguments = OptionParser.ProcessArgs(args, exitFunc));
 		}
 
-		public void ProcessArgs(string[] args)
+		public void Reset()
 		{
-			_optionParser = new OptionList(this);
-			_optionParser.AdditionalBannerInfo = AdditionalBannerInfo;
-			_optionParser.ProcessArgs(args);
-			RemainingArguments = (string[])_arguments.ToArray(typeof(string));
+			OptionParser.Reset();
 		}
 
 		public void ShowBanner()
 		{
-			_optionParser.ShowBanner();
+			OptionParser.ShowBanner();
 		}
+
+		protected readonly OptionsContext Context;
+		protected readonly OptionList OptionParser;
+
+		protected virtual string AdditionalBannerInfo { get { return null; } }
 
 		protected virtual void InitializeOtherDefaults()
 		{
 		}
-
-		// Only subclasses may need to implement something here
-		private ArrayList _arguments = new ArrayList();
-
-		private bool _debuggingOfOptions = false;
-		private OptionList _optionParser;
-		private bool _verboseParsingOfOptions = false;
-
-		private static void DefaultErrorReporter(int number, string message)
-		{
-			if (number > 0)
-				Console.WriteLine("Error {0}: {1}", number, message);
-			else
-				Console.WriteLine("Error: {0}", message);
-		}
 	}
-
-	public delegate void ErrorReporter(int num, string msg);
 }

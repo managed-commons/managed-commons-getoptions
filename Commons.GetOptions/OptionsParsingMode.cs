@@ -29,7 +29,6 @@ namespace Commons.GetOptions
 	{
 		Linux = 1,
 		Windows = 2,
-		Both = 3,
-		GNU_DoubleDash = 4
+		Both = 3
 	}
 }

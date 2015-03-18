@@ -22,7 +22,9 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
+using _ = Commons.TranslationService;
 
 namespace Commons.GetOptions
 {
@@ -43,6 +45,7 @@ namespace Commons.GetOptions
 	{
 		public string AlternateForm;
 		public bool BooleanOption;
+		public bool DontSplitOnCommas;
 		public bool Hidden;
 		public string LongForm;
 		public int MaxOccurs;
@@ -53,27 +56,33 @@ namespace Commons.GetOptions
 		// negative means there is no limit
 		public int Occurs;
 
-		public Options OptionBundle;
+		public object OptionBundle;
 		public System.Type ParameterType;
 		public string paramName = null;
+		public OptionsParsingMode ParsingMode;
 		public bool SecondLevelHelp;
 		public string ShortDescription;
-		public string ShortForm;
+		public char ShortForm;
 		public ArrayList Values;
 		public bool VBCStyleBoolean;
 
-		public OptionDetails(MemberInfo memberInfo,
-							 OptionAttribute option,
-							 Options optionBundle,
-							 Translate translate)
+		public OptionDetails(
+			MemberInfo memberInfo,
+			OptionAttribute option,
+			object optionBundle,
+			OptionsParsingMode parsingMode,
+			bool dontSplitOnCommas
+		)
 		{
-			this.ShortForm = ("" + option.ShortForm).Trim();
-			if (option.LongForm == null)
-				this.LongForm = string.Empty;
+			ShortForm = option.ShortForm;
+			ParsingMode = parsingMode;
+			DontSplitOnCommas = dontSplitOnCommas;
+			if (string.IsNullOrWhiteSpace(option.Name))
+				this.LongForm = (ShortForm == default(char)) ? memberInfo.Name : string.Empty;
 			else
-				this.LongForm = (option.LongForm == string.Empty) ? memberInfo.Name : option.LongForm;
+				this.LongForm = option.Name;
 			this.AlternateForm = option.AlternateForm;
-			this.ShortDescription = ExtractParamName(translate(option.ShortDescription));
+			this.ShortDescription = ExtractParamName(_.Translate(option.Description));
 			this.Occurs = 0;
 			this.OptionBundle = optionBundle;
 			this.BooleanOption = false;
@@ -91,7 +100,7 @@ namespace Commons.GetOptions
 				if (this.ParameterType.FullName != "System.Boolean") {
 					if (this.LongForm.IndexOf(':') >= 0)
 						throw new InvalidOperationException("Options with an embedded colon (':') in their visible name must be boolean!!! [" +
-									this.MemberInfo.ToString() + " isn't]");
+						this.MemberInfo.ToString() + " isn't]");
 
 					this.NeedsParameter = true;
 
@@ -104,7 +113,7 @@ namespace Commons.GetOptions
 								this.MaxOccurs = option.MaxOccurs;
 							else
 								throw new InvalidOperationException("MaxOccurs set to non default value (" + option.MaxOccurs + ") for a [" +
-											this.MemberInfo.ToString() + "] option");
+								this.MemberInfo.ToString() + "] option");
 						}
 					}
 				} else {
@@ -114,7 +123,7 @@ namespace Commons.GetOptions
 							this.MaxOccurs = option.MaxOccurs;
 						else
 							throw new InvalidOperationException("MaxOccurs set to non default value (" + option.MaxOccurs + ") for a [" +
-										this.MemberInfo.ToString() + "] option");
+							this.MemberInfo.ToString() + "] option");
 					}
 				}
 			}
@@ -125,12 +134,12 @@ namespace Commons.GetOptions
 			get
 			{
 				string shortPrefix = "-";
-				string longPrefix = linuxLongPrefix;
-				if (parsingMode == OptionsParsingMode.Windows) {
+				string longPrefix = "--";
+				if (ParsingMode == OptionsParsingMode.Windows) {
 					shortPrefix = "/";
 					longPrefix = "/";
 				}
-				if (this.ShortForm != string.Empty)
+				if (this.ShortForm != default(char))
 					return shortPrefix + this.ShortForm;
 				else
 					return longPrefix + this.LongForm;
@@ -139,7 +148,7 @@ namespace Commons.GetOptions
 
 		public string ParamName { get { return paramName; } }
 
-		public static void LinkAlternatesInsideList(ArrayList list)
+		public static void LinkAlternatesInsideList(List<OptionDetails> list)
 		{
 			Hashtable baseForms = new Hashtable(list.Count);
 			foreach (OptionDetails option in list) {
@@ -192,33 +201,33 @@ namespace Commons.GetOptions
 
 		public override string ToString()
 		{
-			if (_optionHelp == null) {
+			if (optionHelp == null) {
 				string shortPrefix;
 				string longPrefix;
 				bool hasLongForm = (this.LongForm != null && this.LongForm != string.Empty);
-				if (this.OptionBundle.ParsingMode == OptionsParsingMode.Windows) {
+				if (ParsingMode == OptionsParsingMode.Windows) {
 					shortPrefix = "/";
 					longPrefix = "/";
 				} else {
 					shortPrefix = "-";
-					longPrefix = linuxLongPrefix;
+					longPrefix = "--";
 				}
-				_optionHelp = "  ";
-				_optionHelp += (this.ShortForm != string.Empty) ? shortPrefix + this.ShortForm + " " : "   ";
-				_optionHelp += hasLongForm ? longPrefix + this.LongForm : "";
+				optionHelp = "  ";
+				optionHelp += (this.ShortForm != default(char)) ? shortPrefix + this.ShortForm + " " : "   ";
+				optionHelp += hasLongForm ? longPrefix + this.LongForm : "";
 				if (NeedsParameter) {
 					if (hasLongForm)
-						_optionHelp += ":";
-					_optionHelp += ParamName;
+						optionHelp += ":";
+					optionHelp += ParamName;
 				} else if (BooleanOption && VBCStyleBoolean) {
-					_optionHelp += "[+|-]";
+					optionHelp += "[+|-]";
 				}
-				_optionHelp += "\t";
+				optionHelp += "\t";
 				if (this.AlternateForm != string.Empty && this.AlternateForm != null)
-					_optionHelp += "Also " + shortPrefix + this.AlternateForm + (NeedsParameter ? (":" + ParamName) : "") + ". ";
-				_optionHelp += this.ShortDescription;
+					optionHelp += "Also " + shortPrefix + this.AlternateForm + (NeedsParameter ? (":" + ParamName) : "") + ". ";
+				optionHelp += this.ShortDescription;
 			}
-			return _optionHelp;
+			return optionHelp;
 		}
 
 		public void TransferValues()
@@ -239,40 +248,11 @@ namespace Commons.GetOptions
 			}
 		}
 
-		internal string Key
-		{
-			get
-			{
-				if (useGNUFormat) {
-					string ShortID = this.ShortForm.ToUpper();
-					if (ShortID == string.Empty)
-						ShortID = "ZZ";
-					return ShortID + " " + this.LongForm;
-				} else
-					return this.LongForm + " " + this.ShortForm;
-			}
-		}
+		internal string Key { get { return (this.ShortForm == default(char)) ? this.LongForm : this.ShortForm + " " + this.LongForm; } }
 
-		private string _optionHelp = null;
+		private string optionHelp = null;
 
 		private bool AddingOneMoreExceedsMaxOccurs { get { return HowManyBeforeExceedingMaxOccurs(1) < 1; } }
-
-		private bool dontSplitOnCommas { get { return OptionBundle.DontSplitOnCommas; } }
-
-		private string linuxLongPrefix
-		{
-			get
-			{
-				return (useGNUFormat ? "--" : "-");
-			}
-		}
-
-		private OptionsParsingMode parsingMode { get { return OptionBundle.ParsingMode; } }
-
-		//		private bool debugOptions { get { return OptionBundle.DebuggingOfOptions; } }
-		private bool useGNUFormat { get { return (parsingMode & OptionsParsingMode.GNU_DoubleDash) == OptionsParsingMode.GNU_DoubleDash; } }
-
-		private bool verboseParsing { get { return OptionBundle.VerboseParsingOfOptions || OptionBundle.DebuggingOfOptions; } }
 
 		private static System.Type TypeOfMember(MemberInfo memberInfo)
 		{
@@ -301,9 +281,6 @@ namespace Commons.GetOptions
 			if (AddingOneMoreExceedsMaxOccurs)
 				return;
 
-			if (verboseParsing)
-				Console.WriteLine("<{0}> set to [{1}]", this.LongForm, setValue);
-
 			if (MemberInfo is FieldInfo) {
 				((FieldInfo)MemberInfo).SetValue(OptionBundle, setValue);
 				return;
@@ -323,7 +300,7 @@ namespace Commons.GetOptions
 
 			string[] parameterValues;
 
-			if (dontSplitOnCommas || MaxOccurs == 1)
+			if (DontSplitOnCommas || MaxOccurs == 1)
 				parameterValues = new string[] { parameterValue };
 			else
 				parameterValues = parameterValue.Split(',');
@@ -335,9 +312,6 @@ namespace Commons.GetOptions
 					break;
 
 				object convertedParameter = null;
-
-				if (verboseParsing)
-					Console.WriteLine("<" + this.LongForm + "> set to [" + parameter + "]");
 
 				if (Values != null && parameter != null) {
 					try {
@@ -386,8 +360,8 @@ namespace Commons.GetOptions
 				paramName = shortDescription.Substring(whereBegins + 1, whereEnds - whereBegins - 1);
 				shortDescription =
 					shortDescription.Substring(0, whereBegins) +
-					paramName +
-					shortDescription.Substring(whereEnds + 1);
+				paramName +
+				shortDescription.Substring(whereEnds + 1);
 			}
 			return shortDescription;
 		}
@@ -419,9 +393,14 @@ namespace Commons.GetOptions
 				arg = arg.TrimStart('-', '/');
 				if (VBCStyleBoolean)
 					arg = arg.TrimEnd('-', '+');
-				return (arg == ShortForm || arg == LongForm || arg == AlternateForm);
+				return (MatchShortForm(arg) || arg == LongForm || arg == AlternateForm);
 			}
 			return false;
+		}
+
+		private bool MatchShortForm(string arg)
+		{
+			return arg.Length == 1 && arg[0] == ShortForm;
 		}
 	}
 }
