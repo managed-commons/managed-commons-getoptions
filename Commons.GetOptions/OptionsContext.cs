@@ -23,9 +23,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using _ = Commons.Translation.TranslationService;
 
 namespace Commons.GetOptions
 {
+	public delegate void ErrorReporter(int num, string msg);
+
 	public class OptionsContext
 	{
 		public bool BreakSingleDashManyLettersIntoManyOptions = false;
@@ -46,9 +49,9 @@ namespace Commons.GetOptions
 		public static void DefaultErrorReporter(int number, string message)
 		{
 			if (number > 0)
-				Console.WriteLine("Error {0}: {1}", number, message);
+				Console.WriteLine(_.TranslateAndFormat("Error {0}: {1}", number, message));
 			else
-				Console.WriteLine("Error: {0}", message);
+				Console.WriteLine(_.TranslateAndFormat("Error: {0}", message));
 		}
 
 		public static string[] Exit(int exitCode)
@@ -57,6 +60,4 @@ namespace Commons.GetOptions
 			return null;
 		}
 	}
-
-	public delegate void ErrorReporter(int num, string msg);
 }

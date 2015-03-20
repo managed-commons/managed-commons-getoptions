@@ -24,7 +24,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using _ = Commons.TranslationService;
+using _ = Commons.Translation.TranslationService;
 
 namespace Commons.GetOptions
 {
@@ -52,12 +52,9 @@ namespace Commons.GetOptions
 		public MemberInfo MemberInfo;
 		public bool NeedsParameter;
 		public OptionDetails NextAlternate = null;
-
-		// negative means there is no limit
-		public int Occurs;
-
+		public int Occurs;// negative means there is no limit
 		public object OptionBundle;
-		public System.Type ParameterType;
+		public Type ParameterType;
 		public string paramName = null;
 		public OptionsParsingMode ParsingMode;
 		public bool SecondLevelHelp;
@@ -66,8 +63,13 @@ namespace Commons.GetOptions
 		public ArrayList Values;
 		public bool VBCStyleBoolean;
 
+		static OptionDetails()
+		{
+			_.Register(new Translator());
+		}
+
 		public OptionDetails(
-			MemberInfo memberInfo,
+					MemberInfo memberInfo,
 			OptionAttribute option,
 			object optionBundle,
 			OptionsParsingMode parsingMode,
@@ -95,12 +97,11 @@ namespace Commons.GetOptions
 			this.Hidden = false; // TODO: check other attributes
 
 			this.ParameterType = TypeOfMember(memberInfo);
-
+			var NonDefaultMessage = string.Format("MaxOccurs set to non default value ({0}) for a [{1}] option", option.MaxOccurs, this.MemberInfo);
 			if (this.ParameterType != null) {
 				if (this.ParameterType.FullName != "System.Boolean") {
 					if (this.LongForm.IndexOf(':') >= 0)
-						throw new InvalidOperationException("Options with an embedded colon (':') in their visible name must be boolean!!! [" +
-						this.MemberInfo.ToString() + " isn't]");
+						throw new InvalidOperationException(string.Format("Options with an embedded colon (':') in their visible name must be boolean!!! [{0} isn't]", this.MemberInfo));
 
 					this.NeedsParameter = true;
 
@@ -112,8 +113,7 @@ namespace Commons.GetOptions
 							if (this.MemberInfo is MethodInfo || this.MemberInfo is PropertyInfo)
 								this.MaxOccurs = option.MaxOccurs;
 							else
-								throw new InvalidOperationException("MaxOccurs set to non default value (" + option.MaxOccurs + ") for a [" +
-								this.MemberInfo.ToString() + "] option");
+								throw new InvalidOperationException(NonDefaultMessage);
 						}
 					}
 				} else {
@@ -122,8 +122,7 @@ namespace Commons.GetOptions
 						if (this.MemberInfo is MethodInfo || this.MemberInfo is PropertyInfo)
 							this.MaxOccurs = option.MaxOccurs;
 						else
-							throw new InvalidOperationException("MaxOccurs set to non default value (" + option.MaxOccurs + ") for a [" +
-							this.MemberInfo.ToString() + "] option");
+							throw new InvalidOperationException(NonDefaultMessage);
 					}
 				}
 			}
@@ -166,11 +165,6 @@ namespace Commons.GetOptions
 					}
 				}
 			}
-		}
-
-		int IComparable.CompareTo(object other)
-		{
-			return Key.CompareTo(((OptionDetails)other).Key);
 		}
 
 		public OptionProcessingResult ProcessArgument(string arg, string nextArg)
@@ -224,7 +218,7 @@ namespace Commons.GetOptions
 				}
 				optionHelp += "\t";
 				if (this.AlternateForm != string.Empty && this.AlternateForm != null)
-					optionHelp += "Also " + shortPrefix + this.AlternateForm + (NeedsParameter ? (":" + ParamName) : "") + ". ";
+					optionHelp += _.Translate("Also ") + shortPrefix + this.AlternateForm + (NeedsParameter ? (":" + ParamName) : "") + ". ";
 				optionHelp += this.ShortDescription;
 			}
 			return optionHelp;
@@ -276,6 +270,11 @@ namespace Commons.GetOptions
 			throw new NotSupportedException("'" + memberInfo.MemberType + "' memberType is not supported");
 		}
 
+		int IComparable.CompareTo(object other)
+		{
+			return Key.CompareTo(((OptionDetails)other).Key);
+		}
+
 		private void DoIt(bool setValue)
 		{
 			if (AddingOneMoreExceedsMaxOccurs)
@@ -317,7 +316,7 @@ namespace Commons.GetOptions
 					try {
 						convertedParameter = Convert.ChangeType(parameter, ParameterType.GetElementType());
 					} catch (Exception ex) {
-						Console.WriteLine(String.Format("The value '{0}' is not convertible to the appropriate type '{1}' for the {2} option (reason '{3}')", parameter, ParameterType.GetElementType().Name, DefaultForm, ex.Message));
+						ReportBadConversion(parameter, ex);
 					}
 					Values.Add(convertedParameter);
 					continue;
@@ -327,7 +326,7 @@ namespace Commons.GetOptions
 					try {
 						convertedParameter = Convert.ChangeType(parameter, ParameterType);
 					} catch (Exception ex) {
-						Console.WriteLine(String.Format("The value '{0}' is not convertible to the appropriate type '{1}' for the {2} option (reason '{3}')", parameter, ParameterType.Name, DefaultForm, ex.Message));
+						ReportBadConversion(parameter, ex);
 						continue;
 					}
 				}
@@ -351,7 +350,7 @@ namespace Commons.GetOptions
 		{
 			int whereBegins = shortDescription.IndexOf("{");
 			if (whereBegins < 0)
-				paramName = "PARAM";
+				paramName = _.Translate("PARAM");
 			else {
 				int whereEnds = shortDescription.IndexOf("}");
 				if (whereEnds < whereBegins)
@@ -369,7 +368,7 @@ namespace Commons.GetOptions
 		private int HowManyBeforeExceedingMaxOccurs(int howMany)
 		{
 			if (MaxOccurs > 0 && (Occurs + howMany) > MaxOccurs) {
-				System.Console.Error.WriteLine("Option " + LongForm + " can be used at most " + MaxOccurs + " times. Ignoring extras...");
+				Console.Error.WriteLine(_.TranslateAndFormat("Option {0} can be used at most {1} times. Ignoring extras...", LongForm, MaxOccurs));
 				howMany = MaxOccurs - Occurs;
 			}
 			Occurs += howMany;
@@ -401,6 +400,11 @@ namespace Commons.GetOptions
 		private bool MatchShortForm(string arg)
 		{
 			return arg.Length == 1 && arg[0] == ShortForm;
+		}
+
+		private void ReportBadConversion(string parameter, Exception ex)
+		{
+			Console.WriteLine(_.TranslateAndFormat("The value '{0}' is not convertible to the appropriate type '{1}' for the {2} option (reason '{3}')", parameter, ParameterType.Name, DefaultForm, ex.Message));
 		}
 	}
 }

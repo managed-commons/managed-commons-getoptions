@@ -7,7 +7,7 @@ namespace Commons.GetOptions
 	public class OptionsWithSecondLevel : Options
 	{
 		public OptionsWithSecondLevel(OptionsContext context, string[] args = null)
-			: base(context, args)
+			: base(context)
 		{
 		}
 

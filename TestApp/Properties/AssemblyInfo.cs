@@ -21,8 +21,6 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using Commons;
 
 [assembly: AssemblyTitle("TestApp")]
 [assembly: AssemblyDescription("Exercises Commons.GetOptions features")]
@@ -32,8 +30,6 @@ using Commons;
 [assembly: AssemblyCopyright("Copyright ©2015 Rafael 'Monoman' Teixeira, Managed Commons Team")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-
 [assembly: AssemblyVersion("2.0.1")]
 [assembly: AssemblyFileVersion("2.0.0")]
 [assembly: AssemblyInformationalVersion("2.0.0")]
-

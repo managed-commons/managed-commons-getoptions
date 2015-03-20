@@ -31,6 +31,10 @@ using Commons.GetOptions;
 
 namespace Commons.Compilers
 {
+	public delegate void AssemblyAdder(Assembly loadedAssembly);
+
+	public delegate void ModuleAdder(System.Reflection.Module module);
+
 	public enum InternalCompilerErrorReportAction
 	{
 		prompt, send, none
@@ -300,7 +304,10 @@ namespace Commons.Compilers
 		[Option("Specifies the output {file} name", ShortForm = 'o', Name = "out")]
 		public string OutputFileName
 		{
-			set { _outputFileName = value; }
+			set
+			{
+				_outputFileName = value;
+			}
 			get
 			{
 				if (_outputFileName == null) {
@@ -340,13 +347,13 @@ namespace Commons.Compilers
 		public static OptionsContext BuildDefaultContext(ErrorReporter reportError)
 		{
 			return new OptionsContext()
-				{
-					BreakSingleDashManyLettersIntoManyOptions = false,
-					DontSplitOnCommas = true,
-					EndOptionProcessingWithDoubleDash = true,
-					ParsingMode = OptionsParsingMode.Both,
-					ReportError = reportError ?? OptionsContext.DefaultErrorReporter
-				};
+			{
+				BreakSingleDashManyLettersIntoManyOptions = false,
+				DontSplitOnCommas = true,
+				EndOptionProcessingWithDoubleDash = true,
+				ParsingMode = OptionsParsingMode.Both,
+				ReportError = reportError ?? OptionsContext.DefaultErrorReporter
+			};
 		}
 
 		public void AdjustCodegenWhenTargetIsNetModule(AssemblyBuilder assemblyBuilder)
@@ -761,8 +768,4 @@ namespace Commons.Compilers
 		[Option("Specify target CPU platform {ID}. ID can be x86, Itanium, x64 (AMD 64bit) or anycpu (the default).", Name = "platform", SecondLevelHelp = true)]
 		public string TargetPlatform;
 	}
-
-	public delegate void AssemblyAdder(Assembly loadedAssembly);
-
-	public delegate void ModuleAdder(System.Reflection.Module module);
 }

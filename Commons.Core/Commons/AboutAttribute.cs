@@ -1,4 +1,4 @@
-// Commons.GetOptions
+// Commons.Core
 //
 // Copyright (c) 2002-2015 Rafael 'Monoman' Teixeira, Managed Commons Team
 //
@@ -19,24 +19,23 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-
 using System;
 
 namespace Commons
 {
 	[AttributeUsage(AttributeTargets.Assembly)]
-	public class ReportBugsToAttribute : System.Attribute
+	public sealed class AboutAttribute : Attribute
 	{
-		public string Url;
-
-		public ReportBugsToAttribute(string url)
+		public AboutAttribute(string details)
 		{
-			Url = url;
+			Details = details;
 		}
+
+		public string Details { get; private set; }
 
 		public override string ToString()
 		{
-			return Url;
+			return Details;
 		}
 	}
 }

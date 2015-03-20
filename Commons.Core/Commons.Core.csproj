@@ -1,14 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{99DB66DF-8F9B-4808-B65C-1367EFD80E05}</ProjectGuid>
+    <ProjectGuid>{9FD82B7E-A718-4266-BCEF-2F987E374BBB}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Commons.GetOptions.ForCompilers</RootNamespace>
-    <AssemblyName>Commons.GetOptions.ForCompilers</AssemblyName>
+    <AppDesignerFolder>Assembly</AppDesignerFolder>
+    <RootNamespace>
+    </RootNamespace>
+    <AssemblyName>Commons.Core</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -20,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -39,20 +41,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commons.GetOptions.ForCompilers\CommonCompilerOptions.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="Commons.Translation\DictionaryTranslator.cs" />
+    <Compile Include="Commons.Translation\ITranslator.cs" />
+    <Compile Include="Commons\AboutAttribute.cs" />
+    <Compile Include="Commons\AdditionalInfoAttribute.cs" />
+    <Compile Include="Commons.Reflection\AssemblyExtensions.cs" />
+    <Compile Include="Commons\AssemblyInformation.cs" />
+    <Compile Include="Commons\IsPartOfPackageAttribute.cs" />
+    <Compile Include="Commons\LicenseAttribute.cs" />
+    <Compile Include="Commons\ReportBugsToAttribute.cs" />
+    <Compile Include="Commons.Translation\TranslationService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Commons.Core\Commons.Core.csproj">
-      <Project>{9fd82b7e-a718-4266-bcef-2f987e374bbb}</Project>
-      <Name>Commons.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Commons.GetOptions.csproj">
-      <Project>{46274489-59f8-4680-af42-d688e3e899b2}</Project>
-      <Name>Commons.GetOptions</Name>
-    </ProjectReference>
+    <None Include="Commons.Core.nuspec" />
+    <None Include="LICENSE" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>cd $(ProjectDir)
+nuget pack $(ProjectFileName)</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

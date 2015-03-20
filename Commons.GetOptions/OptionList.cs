@@ -27,7 +27,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using _ = Commons.TranslationService;
+using _ = Commons.Translation.TranslationService;
 
 namespace Commons.GetOptions
 {
@@ -57,7 +57,7 @@ namespace Commons.GetOptions
 						OptionDetails option = new OptionDetails(mi, (OptionAttribute)attribs[0], optionBundle, _context.ParsingMode, false);
 						_list.Add(option);
 						_hasSecondLevelHelp = _hasSecondLevelHelp || option.SecondLevelHelp;
-					} else if (mi.DeclaringType == mi.ReflectedType) { // not inherited
+					} else if (mi.DeclaringType == mi.ReflectedType) {	 // not inherited
 						attribs = mi.GetCustomAttributes(typeof(ArgumentProcessorAttribute), true);
 						if (attribs != null && attribs.Length > 0)
 							AddArgumentProcessor(mi);
@@ -65,9 +65,9 @@ namespace Commons.GetOptions
 				}
 			}
 
-			if (_argumentProcessor == null) // try to find an inherited one
+			if (_argumentProcessor == null)	// try to find an inherited one
 				foreach (MemberInfo mi in optionsType.GetMembers())
-					if (mi.DeclaringType != mi.ReflectedType) { // inherited
+					if (mi.DeclaringType != mi.ReflectedType) {	// inherited
 						object[] attribs = mi.GetCustomAttributes(typeof(ArgumentProcessorAttribute), true);
 						if (attribs != null && attribs.Length > 0)
 							AddArgumentProcessor(mi);
@@ -79,7 +79,9 @@ namespace Commons.GetOptions
 
 		public string AdditionalBannerInfo { set { _assemblyInfo.AdditionalBannerInfo = value; } }
 
-		public string[] ProcessArgs(string[] originalArgs, Func<int, string[]> exitFunc)
+		public string Usage { get; set; }
+
+		public Arguments ProcessArgs(string[] originalArgs, Func<int, string[]> exitFunc)
 		{
 			var args = NormalizeArgs(originalArgs);
 			try {
@@ -102,9 +104,10 @@ namespace Commons.GetOptions
 								}
 							}
 							if (!OptionWasProcessed) {
-								Console.WriteLine(_.Translate("Invalid argument: '{0}'"), arg);
+								Console.WriteLine(_.TranslateAndFormat("Invalid argument: '{0}'", arg));
 								DoHelp();
-								return exitFunc(1);
+								exitFunc(1);
+								return null;
 							}
 						} else {
 							ProcessNonOption(arg);
@@ -120,10 +123,11 @@ namespace Commons.GetOptions
 				foreach (string argument in _argumentsTail)
 					ProcessNonOption(argument);
 
-				return (string[])_arguments.ToArray(typeof(string));
+				return new Arguments(_arguments);
 			} catch (Exception ex) {
-				Console.WriteLine(_.Translate("Exception: {0}"), ex);
-				return exitFunc(1);
+				Console.WriteLine(_.TranslateAndFormat("Exception: {0}", ex));
+				exitFunc(1);
+				return null;
 			}
 		}
 
@@ -158,12 +162,6 @@ namespace Commons.GetOptions
 			return WhatToDoNext.AbandonProgram;
 		}
 
-		internal WhatToDoNext DoUsage()
-		{
-			_assemblyInfo.ShowUsage(_list.Where(d => d.ShortForm != default(char)).Select(d => d.ShortForm));
-			return WhatToDoNext.AbandonProgram;
-		}
-
 		internal void Reset()
 		{
 			_bannerAlreadyShown = false;
@@ -181,9 +179,9 @@ namespace Commons.GetOptions
 
 		private MethodInfo _argumentProcessor = null;
 
-		private ArrayList _arguments = new ArrayList();
+		private List<string> _arguments = new List<string>();
 
-		private ArrayList _argumentsTail = new ArrayList();
+		private List<string> _argumentsTail = new List<string>();
 
 		private bool _bannerAlreadyShown = false;
 
@@ -197,19 +195,19 @@ namespace Commons.GetOptions
 		private void AddArgumentProcessor(MemberInfo memberInfo)
 		{
 			if (_argumentProcessor != null)
-				throw new NotSupportedException(_.Translate("More than one argument processor method found"));
+				throw new NotSupportedException("More than one argument processor method found");
 
 			if ((memberInfo.MemberType == MemberTypes.Method && memberInfo is MethodInfo)) {
 				if (((MethodInfo)memberInfo).ReturnType.FullName != typeof(void).FullName)
-					throw new NotSupportedException(_.Translate("Argument processor method must return 'void'"));
+					throw new NotSupportedException("Argument processor method must return 'void'");
 
 				ParameterInfo[] parameters = ((MethodInfo)memberInfo).GetParameters();
 				if ((parameters == null) || (parameters.Length != 1) || (parameters[0].ParameterType.FullName != typeof(string).FullName))
-					throw new NotSupportedException(_.Translate("Argument processor method must have a string parameter"));
+					throw new NotSupportedException("Argument processor method must have a string parameter");
 
 				_argumentProcessor = (MethodInfo)memberInfo;
 			} else
-				throw new NotSupportedException(_.Translate("Argument processor marked member isn't a method"));
+				throw new NotSupportedException("Argument processor marked member isn't a method");
 		}
 
 		private ArrayList ExpandResponseFiles(string[] args)
@@ -290,12 +288,11 @@ namespace Commons.GetOptions
 				using (StreamReader responseFile = new StreamReader(filename)) {
 					while ((line = responseFile.ReadLine()) != null)
 						processResponseFileLine(line, result, sb);
-					responseFile.Close();
 				}
 			} catch (FileNotFoundException) {
-				_context.ReportError(2011, _.Translate("Unable to find response file '") + filename + "'");
+				_context.ReportError(2011, "Unable to find response file '" + filename + "'");
 			} catch (Exception exception) {
-				_context.ReportError(2011, _.Translate("Unable to open response file '") + filename + "'. " + exception.Message);
+				_context.ReportError(2011, "Unable to open response file '" + filename + "'. " + exception.Message);
 			}
 		}
 
@@ -330,7 +327,7 @@ namespace Commons.GetOptions
 		private void ShowHelp(List<ICommand> allCommands)
 		{
 			_assemblyInfo.ShowTitleLines();
-			Console.WriteLine(_assemblyInfo.Usage);
+			Console.WriteLine(Usage);
 			Console.WriteLine(_.Translate("Commands:"));
 			foreach (var command in allCommands) {
 				Console.WriteLine("\t{0}\t{1}", command.Name.ToLowerInvariant(), command.Description);
@@ -340,7 +337,7 @@ namespace Commons.GetOptions
 		private void ShowHelp(bool showSecondLevelHelp)
 		{
 			_assemblyInfo.ShowTitleLines();
-			Console.WriteLine(_assemblyInfo.Usage);
+			Console.WriteLine(Usage);
 			Console.WriteLine(_.Translate("Options:"));
 			ArrayList lines = new ArrayList(_list.Count);
 			int tabSize = 0;

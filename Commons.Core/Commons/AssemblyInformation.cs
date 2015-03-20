@@ -1,4 +1,4 @@
-﻿// Commons.GetOptions
+﻿// Commons.Core
 //
 // Copyright (c) 2002-2015 Rafael 'Monoman' Teixeira, Managed Commons Team
 //
@@ -24,7 +24,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using _ = Commons.TranslationService;
+using Commons.Reflection;
+using _ = Commons.Translation.TranslationService;
 
 namespace Commons
 {
@@ -38,14 +39,13 @@ namespace Commons
 			Copyright = assembly.GetAssemblyAttributeValueAsString<AssemblyCopyrightAttribute>(a => a.Copyright);
 			Description = assembly.GetAssemblyAttributeValueAsString<AssemblyDescriptionAttribute>(a => a.Description);
 			AboutDetails = assembly.GetAssemblyAttributeAsString<AboutAttribute>();
-			UsageComplement = assembly.GetAssemblyAttributeAsString<UsageComplementAttribute>();
 			AdditionalInfo = assembly.GetAssemblyAttributeAsString<AdditionalInfoAttribute>();
 			ReportBugsTo = assembly.GetAssemblyAttributeAsString<ReportBugsToAttribute>();
 			License = assembly.GetAssemblyAttributeAsString<LicenseAttribute>();
 			Authors = GetAuthors(assembly);
 		}
 
-		public static AssemblyInformation FromEntryAssembly { get { return new AssemblyInformation(Assembly.GetEntryAssembly());}}
+		public static AssemblyInformation FromEntryAssembly { get { return new AssemblyInformation(Assembly.GetEntryAssembly()); } }
 
 		public string AboutDetails { get; set; }
 
@@ -69,17 +69,6 @@ namespace Commons
 
 		public string Title { get; set; }
 
-		public string Usage
-		{
-			get
-			{
-				string format = _.Translate("Usage: {0} [options] {1}");
-				return string.Format(format, ExeName, _.Translate(UsageComplement));
-			}
-		}
-
-		public string UsageComplement { get; set; }
-
 		public string Version { get; set; }
 
 		public AssemblyInformation WithDefaults
@@ -91,7 +80,6 @@ namespace Commons
 				Description = Description ?? "Add a [assembly: AssemblyDescription(\"Here goes the short description\")] to your assembly";
 				Title = Title ?? "Add a [assembly: AssemblyTitle(\"Here goes the application name\")] to your assembly";
 				Product = Product ?? "Add a [assembly: AssemblyProduct(\"Here goes the product/parent project name\")] to your assembly";
-				UsageComplement = UsageComplement ?? "Add a [assembly: Commons.UsageComplement(\"Here goes the usage clause complement\")] to your assembly";
 				if (Authors == null) {
 					var authors = new String[1];
 					authors[0] = "Add [assembly: AssemblyCompany(\"Here goes the authors' names, separated by commas\")] to your assembly";
@@ -135,20 +123,11 @@ namespace Commons
 			Console.WriteLine();
 		}
 
-		public void ShowUsage(IEnumerable<char> shortOptions)
-		{
-			Console.WriteLine(Usage);
-			Console.Write(_.Translate("Short Options: "));
-			foreach (char option in shortOptions)
-				Console.Write(option);
-			Console.WriteLine();
-		}
-
 		private static IEnumerable<string> GetAuthors(Assembly assembly)
 		{
 			string company = assembly.GetAssemblyAttributeValueAsString<AssemblyCompanyAttribute>(a => a.Company);
 			if (!string.IsNullOrWhiteSpace(company))
-				return company.Split(',');
+				return company.Split(',').Select(s => s.Trim());
 			return null;
 		}
 	}

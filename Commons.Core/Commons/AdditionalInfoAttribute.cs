@@ -1,4 +1,4 @@
-// Commons.GetOptions
+// Commons.Core
 //
 // Copyright (c) 2002-2015 Rafael 'Monoman' Teixeira, Managed Commons Team
 //
@@ -24,19 +24,19 @@ using System;
 
 namespace Commons
 {
-	[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
-	public class IsPartOfPackageAttribute : System.Attribute
+	[AttributeUsage(AttributeTargets.Assembly)]
+	public sealed class AdditionalInfoAttribute : Attribute
 	{
-		public string PackageName;
-
-		public IsPartOfPackageAttribute(string packageName)
+		public AdditionalInfoAttribute(string info)
 		{
-			PackageName = packageName;
+			Info = info;
 		}
+
+		public string Info { get; private set; }
 
 		public override string ToString()
 		{
-			return PackageName;
+			return Info;
 		}
 	}
 }

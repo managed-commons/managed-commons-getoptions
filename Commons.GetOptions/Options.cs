@@ -28,29 +28,13 @@ namespace Commons.GetOptions
 {
 	public class Options
 	{
-		public string[] RemainingArguments;
-
-		public Options(OptionsContext context, string[] args = null)
+		public Options(OptionsContext context)
 		{
-			InitializeOtherDefaults();
 			Context = context;
+			InitializeOtherDefaults();
 			OptionParser = new OptionList(this, context);
 			OptionParser.AdditionalBannerInfo = AdditionalBannerInfo;
-			if (args != null)
-				ProcessArgs(args, OptionsContext.Exit);
 		}
-
-		public string FifthArgument { get { return (RemainingArguments.Length > 4) ? RemainingArguments[4] : null; } }
-
-		public string FirstArgument { get { return (RemainingArguments.Length > 0) ? RemainingArguments[0] : null; } }
-
-		public string FourthArgument { get { return (RemainingArguments.Length > 3) ? RemainingArguments[3] : null; } }
-
-		public bool GotNoArguments { get { return RemainingArguments.Length == 0; } }
-
-		public string SecondArgument { get { return (RemainingArguments.Length > 1) ? RemainingArguments[1] : null; } }
-
-		public string ThirdArgument { get { return (RemainingArguments.Length > 2) ? RemainingArguments[2] : null; } }
 
 		[Option("Display version and licensing information", ShortForm = 'V', Name = "version")]
 		public virtual WhatToDoNext DoAbout()
@@ -64,14 +48,9 @@ namespace Commons.GetOptions
 			return OptionParser.DoHelp();
 		}
 
-		public void DoUsage()
+		public Arguments ProcessArgs(string[] args, Func<int, string[]> exitFunc)
 		{
-			OptionParser.DoUsage();
-		}
-
-		public String[] ProcessArgs(string[] args, Func<int, string[]> exitFunc)
-		{
-			return (RemainingArguments = OptionParser.ProcessArgs(args, exitFunc));
+			return OptionParser.ProcessArgs(args, exitFunc);
 		}
 
 		public void Reset()

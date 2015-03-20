@@ -38,12 +38,59 @@ namespace Commons.GetOptions
 		void Execute(IEnumerable<string> args, ErrorReporter ReportError);
 	}
 
+	public class Commands : IEqualityComparer<ICommand>
+	{
+		public readonly List<ICommand> AllCommands = new List<ICommand>();
+		public readonly OptionsContext Context = new OptionsContext();
+
+		public virtual string AdditionalBannerInfo { get { return null; } }
+
+		public bool Equals(ICommand x, ICommand y)
+		{
+			return x.Name.Equals(y.Name, StringComparison.InvariantCultureIgnoreCase);
+		}
+
+		public int GetHashCode(ICommand obj)
+		{
+			return obj.Name.GetHashCode();
+		}
+
+		public void ProcessArgs(string[] args, Func<int, string[]> exitFunc)
+		{
+			OptionList optionParser = new OptionList(this, Context, stopOnFirstNonOption: true);
+			optionParser.AdditionalBannerInfo = AdditionalBannerInfo;
+			if (args == null || args.Length == 0) {
+				optionParser.DoHelp();
+				return;
+			}
+
+			var helpCommand = new HelpCommand(AllCommands, optionParser, Context);
+			AllCommands.Add(helpCommand);
+			var commands = AllCommands.Distinct(this).OrderBy(command => command.Name.ToLowerInvariant()).ToList();
+			AllCommands.Clear();
+			AllCommands.AddRange(commands);
+
+			var remainingArgs = optionParser.ProcessArgs(args, exitFunc);
+			var commandName = remainingArgs.FirstOrDefault();
+			var commandArgs = remainingArgs.Skip(1).ToArray();
+
+			if (string.IsNullOrWhiteSpace(commandName)) {
+				optionParser.DoHelp();
+				return;
+			}
+
+			foreach (var command in AllCommands) {
+				if (commandName.Equals(command.Name, StringComparison.InvariantCultureIgnoreCase)) {
+					OptionList parser = new OptionList(command, Context);
+					parser.AdditionalBannerInfo = AdditionalBannerInfo;
+					command.Execute(parser.ProcessArgs(commandArgs, exitFunc), Context.ReportError);
+				}
+			}
+		}
+	}
+
 	public class HelpCommand : ICommand
 	{
-		private readonly List<ICommand> _commands;
-		private readonly OptionList _optionParser;
-		private readonly OptionsContext _context;
-
 		public HelpCommand(List<ICommand> commands, OptionList optionParser, OptionsContext context)
 		{
 			_commands = commands;
@@ -69,56 +116,9 @@ namespace Commons.GetOptions
 			} else
 				_optionParser.DoHelp(_commands);
 		}
-	}
 
-	public class Commands : IEqualityComparer<ICommand>
-	{
-		public readonly List<ICommand> AllCommands = new List<ICommand>();
-		public readonly OptionsContext Context = new OptionsContext();
-
-		public virtual string AdditionalBannerInfo { get { return null; } }
-
-		public void ProcessArgs(string[] args, Func<int, string[]> exitFunc)
-		{
-			OptionList optionParser = new OptionList(this, Context, stopOnFirstNonOption: true);
-			optionParser.AdditionalBannerInfo = AdditionalBannerInfo;
-			if (args == null || args.Length == 0) {
-				optionParser.DoUsage();
-				return;
-			}
-
-			var helpCommand = new HelpCommand(AllCommands, optionParser, Context);
-			AllCommands.Add(helpCommand);
-			var commands = AllCommands.Distinct(this).OrderBy(command => command.Name.ToLowerInvariant()).ToList();
-			AllCommands.Clear();
-			AllCommands.AddRange(commands);
-
-			var remainingArgs = optionParser.ProcessArgs(args, exitFunc);
-			var commandName = remainingArgs.FirstOrDefault();
-			var commandArgs = remainingArgs.Skip(1).ToArray();
-
-			if (string.IsNullOrWhiteSpace(commandName)) {
-				optionParser.DoUsage();
-				return;
-			}
-
-			foreach (var command in AllCommands) {
-				if (commandName.Equals(command.Name, StringComparison.InvariantCultureIgnoreCase)) {
-					OptionList parser = new OptionList(command, Context);
-					parser.AdditionalBannerInfo = AdditionalBannerInfo;
-					command.Execute(parser.ProcessArgs(commandArgs, exitFunc), Context.ReportError);
-				}
-			}
-		}
-
-		public bool Equals(ICommand x, ICommand y)
-		{
-			return x.Name.Equals(y.Name,StringComparison.InvariantCultureIgnoreCase);
-		}
-
-		public int GetHashCode(ICommand obj)
-		{
-			return obj.Name.GetHashCode();
-		}
+		private readonly List<ICommand> _commands;
+		private readonly OptionsContext _context;
+		private readonly OptionList _optionParser;
 	}
 }

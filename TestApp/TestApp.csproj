@@ -36,11 +36,16 @@
   <ItemGroup>
     <Compile Include="AppCommands.cs" />
     <Compile Include="AppOptions.cs" />
+    <Compile Include="AppTranslator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <ProjectReference Include="..\Commons.Core\Commons.Core.csproj">
+      <Project>{9fd82b7e-a718-4266-bcef-2f987e374bbb}</Project>
+      <Name>Commons.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Commons.GetOptions.csproj">
       <Project>{46274489-59F8-4680-AF42-D688E3E899B2}</Project>
       <Name>Commons.GetOptions</Name>

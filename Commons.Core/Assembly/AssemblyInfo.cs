@@ -1,4 +1,4 @@
-// Commons.GetOptions
+// Commons.Core
 //
 // Copyright (c) 2002-2015 Rafael 'Monoman' Teixeira, Managed Commons Team
 //
@@ -19,23 +19,23 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 using System;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using Commons;
 
-namespace Commons
-{
-	[AttributeUsage(AttributeTargets.Assembly)]
-	public class AboutAttribute : System.Attribute
-	{
-		public string Details;
-
-		public AboutAttribute(string details)
-		{
-			Details = details;
-		}
-
-		public override string ToString()
-		{
-			return Details;
-		}
-	}
-}
+[assembly: AssemblyTitle("Commons.Core")]
+[assembly: AssemblyDescription("Core meta-information library")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("Rafael 'Monoman' Teixeira, Managed Commons Team")]
+[assembly: AssemblyCopyright("Copyright ©2002-2015 Rafael 'Monoman' Teixeira, Managed Commons Team")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+[assembly: CLSCompliant(true)]
+[assembly: AssemblyVersion("1.0.0")]
+[assembly: AssemblyFileVersion("1.0.0")]
+[assembly: AssemblyProduct("Managed.Commons.Core")]
+[assembly: AssemblyInformationalVersion("1.0.0")]
+[assembly: ComVisible(false)]
+[assembly: License(LicenseType.MIT)]

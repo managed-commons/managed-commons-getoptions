@@ -1,4 +1,4 @@
-// Commons.GetOptions
+// Commons.Core
 //
 // Copyright (c) 2002-2015 Rafael 'Monoman' Teixeira, Managed Commons Team
 //
@@ -25,18 +25,18 @@ using System;
 namespace Commons
 {
 	[AttributeUsage(AttributeTargets.Assembly)]
-	public class UsageComplementAttribute : System.Attribute
+	public sealed class ReportBugsToAttribute : Attribute
 	{
-		public string Details;
-
-		public UsageComplementAttribute(string details)
+		public ReportBugsToAttribute(string url)
 		{
-			Details = details;
+			Url = url;
 		}
+
+		public string Url { get; private set; }
 
 		public override string ToString()
 		{
-			return Details;
+			return Url;
 		}
 	}
 }

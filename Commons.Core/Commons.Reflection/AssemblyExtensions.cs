@@ -1,4 +1,4 @@
-﻿// Commons.GetOptions
+﻿// Commons.Core
 //
 // Copyright (c) 2002-2015 Rafael 'Monoman' Teixeira, Managed Commons Team
 //
@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Commons
+namespace Commons.Reflection
 {
 	public static class AssemblyExtensions
 	{
@@ -39,13 +39,13 @@ namespace Commons
 			return (assembly == null) ? null : assembly.GetCustomAttributes(typeof(T), false);
 		}
 
-		public static R GetAssemblyAttributeValue<T, R>(this Assembly assembly, Func<T, R> getter) where T : Attribute
+		public static TReturn GetAssemblyAttributeValue<T, TReturn>(this Assembly assembly, Func<T, TReturn> getter) where T : Attribute
 		{
 			object[] result = assembly.GetAssemblyAttributes<T>();
 
 			if ((result != null) && (result.Length > 0) && (result[0] is T))
 				return getter((T)result[0]);
-			return default(R);
+			return default(TReturn);
 		}
 
 		public static string GetAssemblyAttributeValueAsString<T>(this Assembly assembly, Func<T, string> getter) where T : Attribute
@@ -55,6 +55,8 @@ namespace Commons
 
 		public static string GetVersion(this Assembly assembly, int size = 3)
 		{
+			if (assembly == null)
+				return string.Empty;
 			var version = assembly.GetAssemblyAttributeValueAsString<AssemblyInformationalVersionAttribute>(a => a.InformationalVersion);
 			if (string.IsNullOrWhiteSpace(version))
 				version = assembly.GetName().Version.ToString(size);

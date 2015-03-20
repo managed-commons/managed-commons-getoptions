@@ -39,5 +39,4 @@ using Commons;
 [assembly: AssemblyInformationalVersion("1.0")]
 [assembly: ComVisible(false)]
 [assembly: Guid("42c07ee4-628b-4178-818a-d0379b12da05")]
-
 [assembly: License(LicenseType.MIT)]
