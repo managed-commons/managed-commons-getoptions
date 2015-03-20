@@ -23,11 +23,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Console;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using _ = Commons.Translation.TranslationService;
+using Commons.Translation.TranslationService;
 
 namespace Commons.GetOptions
 {
@@ -104,7 +105,7 @@ namespace Commons.GetOptions
 								}
 							}
 							if (!OptionWasProcessed) {
-								Console.WriteLine(_.TranslateAndFormat("Invalid argument: '{0}'", arg));
+								WriteLine(TranslateAndFormat("Invalid argument: '{0}'", arg));
 								DoHelp();
 								exitFunc(1);
 								return null;
@@ -125,7 +126,7 @@ namespace Commons.GetOptions
 
 				return new Arguments(_arguments);
 			} catch (Exception ex) {
-				Console.WriteLine(_.TranslateAndFormat("Exception: {0}", ex));
+				WriteLine(_Format("Exception: {0}", ex));
 				exitFunc(1);
 				return null;
 			}
@@ -327,18 +328,18 @@ namespace Commons.GetOptions
 		private void ShowHelp(List<ICommand> allCommands)
 		{
 			_assemblyInfo.ShowTitleLines();
-			Console.WriteLine(Usage);
-			Console.WriteLine(_.Translate("Commands:"));
+			WriteLine(Usage);
+			WriteLine(_("Commands:"));
 			foreach (var command in allCommands) {
-				Console.WriteLine("\t{0}\t{1}", command.Name.ToLowerInvariant(), command.Description);
+				WriteLine("\t{0}\t{1}", command.Name.ToLowerInvariant(), command.Description);
 			}
 		}
 
 		private void ShowHelp(bool showSecondLevelHelp)
 		{
 			_assemblyInfo.ShowTitleLines();
-			Console.WriteLine(Usage);
-			Console.WriteLine(_.Translate("Options:"));
+			WriteLine(Usage);
+			WriteLine(_("Options:"));
 			ArrayList lines = new ArrayList(_list.Count);
 			int tabSize = 0;
 			foreach (OptionDetails option in _list)
@@ -354,13 +355,13 @@ namespace Commons.GetOptions
 			tabSize += 2;
 			foreach (string line in lines) {
 				string[] parts = line.Split('\t');
-				Console.Write(parts[0].PadRight(tabSize));
-				Console.WriteLine(parts[1]);
+				Write(parts[0].PadRight(tabSize));
+				WriteLine(parts[1]);
 				if (parts.Length > 2) {
 					string spacer = new string(' ', tabSize);
 					for (int i = 2; i < parts.Length; i++) {
-						Console.Write(spacer);
-						Console.WriteLine(parts[i]);
+						Write(spacer);
+						WriteLine(parts[i]);
 					}
 				}
 			}

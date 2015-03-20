@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections;
+using System.Console;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -549,7 +550,7 @@ namespace Commons.Compilers
 			TimeSpan span = now - _last_time;
 			_last_time = now;
 
-			Console.WriteLine(
+			WriteLine(
 				"[{0:00}:{1:000}] {2}",
 				(int)span.TotalSeconds, span.Milliseconds, msg);
 		}
@@ -561,7 +562,7 @@ namespace Commons.Compilers
 
 			_last_time = DateTime.Now;
 
-			Console.WriteLine("[*] {0}", msg);
+			WriteLine("[*] {0}", msg);
 		}
 
 		public void UnsupportedFeatureOnthisRuntime(string feature)
@@ -706,7 +707,7 @@ namespace Commons.Compilers
 					}
 				}
 				Context.ReportError(6, "Cannot find module `" + module + "'");
-				Console.WriteLine("Log: \n" + total_log);
+				WriteLine("Log: \n" + total_log);
 			} catch (BadImageFormatException f) {
 				Context.ReportError(6, "Cannot load module (bad file format)" + f.FusionLog);
 			} catch (FileLoadException f) {

@@ -23,8 +23,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Console;
 using System.Reflection;
-using _ = Commons.Translation.TranslationService;
+using Commons.Translation.TranslationService;
 
 namespace Commons.GetOptions
 {
@@ -65,7 +66,7 @@ namespace Commons.GetOptions
 
 		static OptionDetails()
 		{
-			_.Register(new Translator());
+			RegisterTranslator(new Translator());
 		}
 
 		public OptionDetails(
@@ -84,7 +85,7 @@ namespace Commons.GetOptions
 			else
 				this.LongForm = option.Name;
 			this.AlternateForm = option.AlternateForm;
-			this.ShortDescription = ExtractParamName(_.Translate(option.Description));
+			this.ShortDescription = ExtractParamName(_(option.Description));
 			this.Occurs = 0;
 			this.OptionBundle = optionBundle;
 			this.BooleanOption = false;
@@ -218,7 +219,7 @@ namespace Commons.GetOptions
 				}
 				optionHelp += "\t";
 				if (this.AlternateForm != string.Empty && this.AlternateForm != null)
-					optionHelp += _.Translate("Also ") + shortPrefix + this.AlternateForm + (NeedsParameter ? (":" + ParamName) : "") + ". ";
+					optionHelp += _("Also ") + shortPrefix + this.AlternateForm + (NeedsParameter ? (":" + ParamName) : "") + ". ";
 				optionHelp += this.ShortDescription;
 			}
 			return optionHelp;
@@ -350,7 +351,7 @@ namespace Commons.GetOptions
 		{
 			int whereBegins = shortDescription.IndexOf("{");
 			if (whereBegins < 0)
-				paramName = _.Translate("PARAM");
+				paramName = _("PARAM");
 			else {
 				int whereEnds = shortDescription.IndexOf("}");
 				if (whereEnds < whereBegins)
@@ -368,7 +369,7 @@ namespace Commons.GetOptions
 		private int HowManyBeforeExceedingMaxOccurs(int howMany)
 		{
 			if (MaxOccurs > 0 && (Occurs + howMany) > MaxOccurs) {
-				Console.Error.WriteLine(_.TranslateAndFormat("Option {0} can be used at most {1} times. Ignoring extras...", LongForm, MaxOccurs));
+				Error.WriteLine(TranslateAndFormat("Option {0} can be used at most {1} times. Ignoring extras...", LongForm, MaxOccurs));
 				howMany = MaxOccurs - Occurs;
 			}
 			Occurs += howMany;
@@ -404,7 +405,7 @@ namespace Commons.GetOptions
 
 		private void ReportBadConversion(string parameter, Exception ex)
 		{
-			Console.WriteLine(_.TranslateAndFormat("The value '{0}' is not convertible to the appropriate type '{1}' for the {2} option (reason '{3}')", parameter, ParameterType.Name, DefaultForm, ex.Message));
+			WriteLine(TranslateAndFormat("The value '{0}' is not convertible to the appropriate type '{1}' for the {2} option (reason '{3}')", parameter, ParameterType.Name, DefaultForm, ex.Message));
 		}
 	}
 }

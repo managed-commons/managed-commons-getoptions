@@ -32,7 +32,7 @@ using Commons;
 [assembly: AssemblyCopyright("Copyright ©2002-2015 Rafael 'Monoman' Teixeira, Managed Commons Team")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: CLSCompliant(true)]
+[assembly: CLSCompliant(false)]
 [assembly: AssemblyVersion("1.0.0")]
 [assembly: AssemblyFileVersion("1.0.0")]
 [assembly: AssemblyProduct("Managed.Commons.Core")]

@@ -22,9 +22,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Console;
 using System.Linq;
 using Commons.GetOptions;
-using _ = Commons.Translation.TranslationService;
+using Commons.Translation.TranslationService;
 
 namespace TestApp
 {
@@ -44,33 +45,33 @@ namespace TestApp
 			[Option("Only gamma command needs this set!")]
 			public bool GammaCorrected = false;
 
-			public virtual string Description { get { return _.Translate("First mock command"); } }
+			public virtual string Description { get { return _("First mock command"); } }
 
 			public virtual string Name { get { return "alpha"; } }
 
 			public virtual void Execute(IEnumerable<string> args, ErrorReporter ReportError)
 			{
-				Console.WriteLine(_.TranslateAndFormat("Command {0} executed!", Name));
+				WriteLine(TranslateAndFormat("Command {0} executed!", Name));
 			}
 		}
 
 		private class BetaCommand : AlphaCommand
 		{
-			public override string Description { get { return _.Translate("Second mock command"); } }
+			public override string Description { get { return _("Second mock command"); } }
 
 			public override string Name { get { return "beta"; } }
 		}
 
 		private class GammaCommand : AlphaCommand
 		{
-			public override string Description { get { return _.Translate("Third mock command"); } }
+			public override string Description { get { return _("Third mock command"); } }
 
 			public override string Name { get { return "gamma"; } }
 
 			public override void Execute(IEnumerable<string> args, ErrorReporter ReportError)
 			{
 				if (!GammaCorrected)
-					ReportError(13, _.Translate("Should have been gamma corrected!!!"));
+					ReportError(13, _("Should have been gamma corrected!!!"));
 				else
 					base.Execute(args, ReportError);
 			}
@@ -78,7 +79,7 @@ namespace TestApp
 
 		private class ThetaCommand : AlphaCommand
 		{
-			public override string Description { get { return _.Translate("Fourth mock command"); } }
+			public override string Description { get { return _("Fourth mock command"); } }
 
 			public override string Name { get { return "theta"; } }
 		}

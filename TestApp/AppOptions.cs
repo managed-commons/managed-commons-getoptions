@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Console;
 using Commons.GetOptions;
 
 namespace TestApp
@@ -13,7 +14,7 @@ namespace TestApp
 		[Option("Just some bonking for testing...", Name = "bonkers")]
 		public WhatToDoNext DoBonkers()
 		{
-			Console.WriteLine("Bonkers...");
+			WriteLine("Bonkers...");
 			return WhatToDoNext.GoAhead;
 		}
 	}

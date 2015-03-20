@@ -31,7 +31,7 @@ using Commons;
 [assembly: AssemblyCopyright("Copyright ©2002-2015 Rafael 'Monoman' Teixeira, Managed Commons Team")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: CLSCompliant(true)]
+[assembly: CLSCompliant(false)]
 [assembly: AssemblyVersion("2.0.0")]
 [assembly: AssemblyFileVersion("2.0.0")]
 [assembly: AssemblyProduct("Managed.Commons.GetOptions")]

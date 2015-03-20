@@ -28,18 +28,32 @@ namespace Commons.Translation
 {
 	public static class TranslationService
 	{
-		public static void Register(ITranslator translator)
+		public static string _(string textToTranslate)
+		{
+			var context = Assembly.GetCallingAssembly().FullName;
+			return InnerTranslate(Thread.CurrentThread.CurrentCulture.Name, textToTranslate, context);
+		}
+
+		public static string _Format(string textToTranslate, params object[] args)
+		{
+			var context = Assembly.GetCallingAssembly().FullName;
+			return string.Format(
+				InnerTranslate(Thread.CurrentThread.CurrentCulture.Name, textToTranslate, context),
+				args);
+		}
+
+		public static string _Plural(string singular, string plural, int quantity)
+		{
+			var context = Assembly.GetCallingAssembly().FullName;
+			return InnerTranslatePlural(Thread.CurrentThread.CurrentCulture.Name, singular, plural, quantity, context);
+		}
+
+		public static void RegisterTranslator(ITranslator translator)
 		{
 			if (translator == null)
 				throw new ArgumentNullException(nameof(translator));
 			var context = Assembly.GetCallingAssembly().FullName;
 			_chain = new TranslatorInChain(context, translator, _chain);
-		}
-
-		public static string Translate(string textToTranslate)
-		{
-			var context = Assembly.GetCallingAssembly().FullName;
-			return InnerTranslate(Thread.CurrentThread.CurrentCulture.Name, textToTranslate, context);
 		}
 
 		public static string Translate(string locale, string textToTranslate)
@@ -50,14 +64,6 @@ namespace Commons.Translation
 			return InnerTranslate(locale, textToTranslate, context);
 		}
 
-		public static string TranslateAndFormat(string textToTranslate, params object[] args)
-		{
-			var context = Assembly.GetCallingAssembly().FullName;
-			return string.Format(
-				InnerTranslate(Thread.CurrentThread.CurrentCulture.Name, textToTranslate, context),
-				args);
-		}
-
 		public static string TranslateAndFormat(string locale, string textToTranslate, params object[] args)
 		{
 			if (locale == null)
@@ -66,12 +72,6 @@ namespace Commons.Translation
 			return string.Format(
 				InnerTranslate(locale, textToTranslate, context),
 				args);
-		}
-
-		public static string TranslatePlural(string singular, string plural, int quantity)
-		{
-			var context = Assembly.GetCallingAssembly().FullName;
-			return InnerTranslatePlural(Thread.CurrentThread.CurrentCulture.Name, singular, plural, quantity, context);
 		}
 
 		public static string TranslatePlural(string locale, string singular, string plural, int quantity)

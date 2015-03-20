@@ -22,8 +22,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Console;
 using System.Linq;
-using _ = Commons.Translation.TranslationService;
+using Commons.Translation.TranslationService;
 
 namespace Commons.GetOptions
 {
@@ -49,9 +50,9 @@ namespace Commons.GetOptions
 		public static void DefaultErrorReporter(int number, string message)
 		{
 			if (number > 0)
-				Console.WriteLine(_.TranslateAndFormat("Error {0}: {1}", number, message));
+				WriteLine(_Format("Error {0}: {1}", number, message));
 			else
-				Console.WriteLine(_.TranslateAndFormat("Error: {0}", message));
+				WriteLine(TranslateAndFormat("Error: {0}", message));
 		}
 
 		public static string[] Exit(int exitCode)

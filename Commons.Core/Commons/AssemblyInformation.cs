@@ -22,10 +22,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Console;
 using System.Linq;
 using System.Reflection;
 using Commons.Reflection;
-using _ = Commons.Translation.TranslationService;
+using Commons.Translation.TranslationService;
 
 namespace Commons
 {
@@ -92,35 +93,35 @@ namespace Commons
 		public void ShowAbout()
 		{
 			ShowTitleLines();
-			Console.WriteLine(_.Translate(AboutDetails));
-			Console.Write(_.Translate("Authors: "));
-			Console.WriteLine(string.Join(", ", Authors));
+			WriteLine(_(AboutDetails));
+			Write(_("Authors: "));
+			WriteLine(string.Join(", ", Authors));
 		}
 
 		public void ShowBanner()
 		{
-			Console.WriteLine(_.Translate(Title) + "  " + Version + " - " + Copyright);
+			WriteLine(_(Title) + "  " + Version + " - " + Copyright);
 			if (AdditionalBannerInfo != null)
-				Console.WriteLine(AdditionalBannerInfo);
+				WriteLine(AdditionalBannerInfo);
 		}
 
 		public void ShowFooter()
 		{
 			if (AdditionalInfo != null)
-				Console.WriteLine("\n{0}", _.Translate(AdditionalInfo));
+				WriteLine("\n{0}", _(AdditionalInfo));
 			if (ReportBugsTo != null)
-				Console.WriteLine(_.Translate("\nPlease report bugs {0} <{1}>"),
-								  (ReportBugsTo.IndexOf('@') > 0) ? _.Translate("to") : _.Translate("at"),
-								  _.Translate(ReportBugsTo));
+				WriteLine(_("\nPlease report bugs {0} <{1}>"),
+								  (ReportBugsTo.IndexOf('@') > 0) ? _("to") : _("at"),
+								  _(ReportBugsTo));
 		}
 
 		public void ShowTitleLines()
 		{
 			ShowBanner();
-			Console.WriteLine(_.Translate(Description));
+			WriteLine(_(Description));
 			if (!string.IsNullOrWhiteSpace(License))
-				Console.WriteLine("\r\n" + _.Translate("License: ") + License);
-			Console.WriteLine();
+				WriteLine("\r\n" + _("License: ") + License);
+			WriteLine();
 		}
 
 		private static IEnumerable<string> GetAuthors(Assembly assembly)
