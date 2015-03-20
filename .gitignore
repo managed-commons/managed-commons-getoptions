@@ -1,5 +1,6 @@
 bin/
 obj/
+Commons.GetOptions.sln.ide/
 *.suo
 *.userprefs
 *.pidb
