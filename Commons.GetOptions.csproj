@@ -35,6 +35,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Commons.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Commons.Core.1.0.0\lib\net45\Commons.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
@@ -55,16 +59,11 @@
   <ItemGroup>
     <None Include="Commons.GetOptions.nuspec" />
     <None Include="LICENSE" />
+    <None Include="packages.config" />
     <None Include="README.md" />
     <None Include="Commons.GetOptions-license.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="Commons.Core\Commons.Core.csproj">
-      <Project>{9fd82b7e-a718-4266-bcef-2f987e374bbb}</Project>
-      <Name>Commons.Core</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
