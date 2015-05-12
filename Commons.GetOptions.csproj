@@ -35,8 +35,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Commons.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Commons.Core.1.0.0\lib\net45\Commons.Core.dll</HintPath>
+    <Reference Include="Commons.Core, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Commons.Core.1.1.0-Alpha\lib\net45\Commons.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -71,14 +71,19 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>cd $(ProjectDir)
-nuget pack $(ProjectFileName)</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
-  <Target Name="AfterBuild">
-  </Target>
   -->
+  <Target Name="AfterBuild">
+    <ItemGroup>
+      <OldPackages Include="*.nupkg" />
+    </ItemGroup>
+    <Delete Files="@(OldPackages)" />
+    <Exec Command="nuget pack $(ProjectFileName) -Symbols" WorkingDirectory="$(ProjectDir)" Condition="$(DoNotPack)==''" />
+  </Target>
 </Project>

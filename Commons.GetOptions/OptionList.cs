@@ -117,7 +117,7 @@ namespace Commons.GetOptions
                             }
                             if (!OptionWasProcessed)
                             {
-                                WriteLine(TranslateAndFormat("Invalid argument: '{0}'", arg));
+                                WriteLine(_Format("Invalid argument: '{0}'", arg));
                                 DoHelp();
                                 exitFunc(1);
                                 return null;
