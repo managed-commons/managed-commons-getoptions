@@ -21,44 +21,42 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.Console;
-using System.Linq;
-using Commons.Translation.TranslationService;
+using static System.Console;
+using static Commons.Translation.TranslationService;
 
 namespace Commons.GetOptions
 {
-	public delegate void ErrorReporter(int num, string msg);
+    public delegate void ErrorReporter(int num, string msg);
 
-	public class OptionsContext
-	{
-		public bool BreakSingleDashManyLettersIntoManyOptions = false;
-		public bool DontSplitOnCommas = false;
-		public bool EndOptionProcessingWithDoubleDash = true;
-		public OptionsParsingMode ParsingMode = OptionsParsingMode.Both;
-		public ErrorReporter ReportError = DefaultErrorReporter;
+    public class OptionsContext
+    {
+        public bool BreakSingleDashManyLettersIntoManyOptions = false;
+        public bool DontSplitOnCommas = false;
+        public bool EndOptionProcessingWithDoubleDash = true;
+        public OptionsParsingMode ParsingMode = OptionsParsingMode.Both;
+        public ErrorReporter ReportError = DefaultErrorReporter;
 
-		public bool RunningOnWindows
-		{
-			get
-			{
-				var platform = Environment.OSVersion.Platform;
-				return ((platform != PlatformID.Unix) && (platform != PlatformID.MacOSX));
-			}
-		}
+        public bool RunningOnWindows
+        {
+            get
+            {
+                var platform = Environment.OSVersion.Platform;
+                return ((platform != PlatformID.Unix) && (platform != PlatformID.MacOSX));
+            }
+        }
 
-		public static void DefaultErrorReporter(int number, string message)
-		{
-			if (number > 0)
-				WriteLine(_Format("Error {0}: {1}", number, message));
-			else
-				WriteLine(TranslateAndFormat("Error: {0}", message));
-		}
+        public static void DefaultErrorReporter(int number, string message)
+        {
+            if (number > 0)
+                WriteLine(_Format("Error {0}: {1}", number, message));
+            else
+                WriteLine(TranslateAndFormat("Error: {0}", message));
+        }
 
-		public static string[] Exit(int exitCode)
-		{
-			Environment.Exit(exitCode);
-			return null;
-		}
-	}
+        public static string[] Exit(int exitCode)
+        {
+            Environment.Exit(exitCode);
+            return null;
+        }
+    }
 }

@@ -24,11 +24,11 @@ using System;
 
 namespace Commons.GetOptions
 {
-	[AttributeUsage(AttributeTargets.Method)]
-	public class ArgumentProcessorAttribute : Attribute
-	{
-		public ArgumentProcessorAttribute()
-		{
-		}
-	}
+    [AttributeUsage(AttributeTargets.Method)]
+    public class ArgumentProcessorAttribute : Attribute
+    {
+        public ArgumentProcessorAttribute()
+        {
+        }
+    }
 }

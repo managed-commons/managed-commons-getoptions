@@ -24,29 +24,29 @@ using System;
 
 namespace Commons.GetOptions
 {
-	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method)]
-	public class OptionAttribute : Attribute
-	{
-		public OptionAttribute(string shortDescription)
-		{
-			Description = shortDescription;
-			ShortForm = default(char);
-			MaxOccurs = 1;
-		}
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method)]
+    public class OptionAttribute : Attribute
+    {
+        public OptionAttribute(string shortDescription)
+        {
+            Description = shortDescription;
+            ShortForm = default(char);
+            MaxOccurs = 1;
+        }
 
-		public string AlternateForm { get; set; }
+        public string AlternateForm { get; set; }
 
-		public string Description { get; set; }
+        public string Description { get; set; }
 
-		// negative means there is no limit
-		public int MaxOccurs { get; set; }
+        // negative means there is no limit
+        public int MaxOccurs { get; set; }
 
-		public string Name { get; set; }
+        public string Name { get; set; }
 
-		public bool SecondLevelHelp { get; set; }
+        public bool SecondLevelHelp { get; set; }
 
-		public char ShortForm { get; set; }
+        public char ShortForm { get; set; }
 
-		public bool VBCStyleBoolean { get; set; }
-	}
+        public bool VBCStyleBoolean { get; set; }
+    }
 }

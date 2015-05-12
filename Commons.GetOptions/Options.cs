@@ -21,55 +21,53 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Commons.GetOptions
 {
-	public class Options
-	{
-		public Options(OptionsContext context)
-		{
-			Context = context;
-			InitializeOtherDefaults();
-			OptionParser = new OptionList(this, context);
-			OptionParser.AdditionalBannerInfo = AdditionalBannerInfo;
-		}
+    public class Options
+    {
+        public Options(OptionsContext context)
+        {
+            Context = context;
+            InitializeOtherDefaults();
+            OptionParser = new OptionList(this, context);
+            OptionParser.AdditionalBannerInfo = AdditionalBannerInfo;
+        }
 
-		[Option("Display version and licensing information", ShortForm = 'V', Name = "version")]
-		public virtual WhatToDoNext DoAbout()
-		{
-			return OptionParser.DoAbout();
-		}
+        [Option("Display version and licensing information", ShortForm = 'V', Name = "version")]
+        public virtual WhatToDoNext DoAbout()
+        {
+            return OptionParser.DoAbout();
+        }
 
-		[Option("Show this help list", ShortForm = '?', Name = "help")]
-		public virtual WhatToDoNext DoHelp()
-		{
-			return OptionParser.DoHelp();
-		}
+        [Option("Show this help list", ShortForm = '?', Name = "help")]
+        public virtual WhatToDoNext DoHelp()
+        {
+            return OptionParser.DoHelp();
+        }
 
-		public Arguments ProcessArgs(string[] args, Func<int, string[]> exitFunc)
-		{
-			return OptionParser.ProcessArgs(args, exitFunc);
-		}
+        public Arguments ProcessArgs(string[] args, Func<int, string[]> exitFunc)
+        {
+            return OptionParser.ProcessArgs(args, exitFunc);
+        }
 
-		public void Reset()
-		{
-			OptionParser.Reset();
-		}
+        public void Reset()
+        {
+            OptionParser.Reset();
+        }
 
-		public void ShowBanner()
-		{
-			OptionParser.ShowBanner();
-		}
+        public void ShowBanner()
+        {
+            OptionParser.ShowBanner();
+        }
 
-		protected readonly OptionsContext Context;
-		protected readonly OptionList OptionParser;
+        protected readonly OptionsContext Context;
+        protected readonly OptionList OptionParser;
 
-		protected virtual string AdditionalBannerInfo { get { return null; } }
+        protected virtual string AdditionalBannerInfo { get { return null; } }
 
-		protected virtual void InitializeOtherDefaults()
-		{
-		}
-	}
+        protected virtual void InitializeOtherDefaults()
+        {
+        }
+    }
 }

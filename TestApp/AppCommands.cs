@@ -20,68 +20,66 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Generic;
-using System.Console;
-using System.Linq;
 using Commons.GetOptions;
-using Commons.Translation.TranslationService;
+using static System.Console;
+using static Commons.Translation.TranslationService;
 
 namespace TestApp
 {
-	internal class AppCommands : Commands
-	{
-		public AppCommands()
-			: base()
-		{
-			AllCommands.Add(new GammaCommand());
-			AllCommands.Add(new AlphaCommand());
-			AllCommands.Add(new BetaCommand());
-			AllCommands.Add(new ThetaCommand());
-		}
+    internal class AppCommands : Commands
+    {
+        public AppCommands()
+            : base()
+        {
+            AllCommands.Add(new GammaCommand());
+            AllCommands.Add(new AlphaCommand());
+            AllCommands.Add(new BetaCommand());
+            AllCommands.Add(new ThetaCommand());
+        }
 
-		private class AlphaCommand : ICommand
-		{
-			[Option("Only gamma command needs this set!")]
-			public bool GammaCorrected = false;
+        private class AlphaCommand : ICommand
+        {
+            [Option("Only gamma command needs this set!")]
+            public bool GammaCorrected = false;
 
-			public virtual string Description { get { return _("First mock command"); } }
+            public virtual string Description { get { return _("First mock command"); } }
 
-			public virtual string Name { get { return "alpha"; } }
+            public virtual string Name { get { return "alpha"; } }
 
-			public virtual void Execute(IEnumerable<string> args, ErrorReporter ReportError)
-			{
-				WriteLine(TranslateAndFormat("Command {0} executed!", Name));
-			}
-		}
+            public virtual void Execute(IEnumerable<string> args, ErrorReporter ReportError)
+            {
+                WriteLine(TranslateAndFormat("Command {0} executed!", Name));
+            }
+        }
 
-		private class BetaCommand : AlphaCommand
-		{
-			public override string Description { get { return _("Second mock command"); } }
+        private class BetaCommand : AlphaCommand
+        {
+            public override string Description { get { return _("Second mock command"); } }
 
-			public override string Name { get { return "beta"; } }
-		}
+            public override string Name { get { return "beta"; } }
+        }
 
-		private class GammaCommand : AlphaCommand
-		{
-			public override string Description { get { return _("Third mock command"); } }
+        private class GammaCommand : AlphaCommand
+        {
+            public override string Description { get { return _("Third mock command"); } }
 
-			public override string Name { get { return "gamma"; } }
+            public override string Name { get { return "gamma"; } }
 
-			public override void Execute(IEnumerable<string> args, ErrorReporter ReportError)
-			{
-				if (!GammaCorrected)
-					ReportError(13, _("Should have been gamma corrected!!!"));
-				else
-					base.Execute(args, ReportError);
-			}
-		}
+            public override void Execute(IEnumerable<string> args, ErrorReporter ReportError)
+            {
+                if (!GammaCorrected)
+                    ReportError(13, _("Should have been gamma corrected!!!"));
+                else
+                    base.Execute(args, ReportError);
+            }
+        }
 
-		private class ThetaCommand : AlphaCommand
-		{
-			public override string Description { get { return _("Fourth mock command"); } }
+        private class ThetaCommand : AlphaCommand
+        {
+            public override string Description { get { return _("Fourth mock command"); } }
 
-			public override string Name { get { return "theta"; } }
-		}
-	}
+            public override string Name { get { return "theta"; } }
+        }
+    }
 }

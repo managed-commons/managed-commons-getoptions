@@ -24,11 +24,11 @@ using System;
 
 namespace Commons.GetOptions
 {
-	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method)]
-	public class KillInheritedOptionAttribute : Attribute
-	{
-		public KillInheritedOptionAttribute()
-		{
-		}
-	}
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method)]
+    public class KillInheritedOptionAttribute : Attribute
+    {
+        public KillInheritedOptionAttribute()
+        {
+        }
+    }
 }

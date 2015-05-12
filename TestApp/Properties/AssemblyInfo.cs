@@ -22,14 +22,15 @@
 
 using System.Reflection;
 
-[assembly: AssemblyTitle("TestApp")]
-[assembly: AssemblyDescription("Exercises Commons.GetOptions features")]
-[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Rafael 'Monoman' Teixeira, Managed Commons Team")]
-[assembly: AssemblyProduct("Commons.GetOptions")]
+[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCopyright("Copyright ©2015 Rafael 'Monoman' Teixeira, Managed Commons Team")]
-[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: AssemblyVersion("2.0.1")]
-[assembly: AssemblyFileVersion("2.0.0")]
-[assembly: AssemblyInformationalVersion("2.0.0")]
+[assembly: AssemblyDescription("Exercises Commons.GetOptions features")]
+[assembly: AssemblyProduct("Commons.GetOptions")]
+[assembly: AssemblyTitle("TestApp")]
+[assembly: AssemblyTrademark("")]
+
+[assembly: AssemblyVersion("2.1.0")]
+[assembly: AssemblyFileVersion("2.1.0")]
+[assembly: AssemblyInformationalVersion("2.1.0-Alpha")]

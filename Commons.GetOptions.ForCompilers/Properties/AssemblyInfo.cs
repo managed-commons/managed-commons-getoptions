@@ -25,18 +25,20 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using Commons;
 
-[assembly: AssemblyTitle("Commons.GetOptions.ForCompilers")]
-[assembly: AssemblyDescription("Command line arguments parsing library for managed compilers")]
-[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Rafael 'Monoman' Teixeira, Managed Commons Team")]
+[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCopyright("Copyright ©2002-2015 Rafael 'Monoman' Teixeira, Managed Commons Team")]
-[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+[assembly: AssemblyDescription("Command line arguments parsing library for managed compilers")]
+[assembly: AssemblyProduct("Managed.Commons.GetOptions.ForCompilers")]
+[assembly: AssemblyTitle("Commons.GetOptions.ForCompilers")]
+[assembly: AssemblyTrademark("")]
+
 [assembly: CLSCompliant(false)]
+[assembly: ComVisible(false)]
+
 [assembly: AssemblyVersion("1.0.0")]
 [assembly: AssemblyFileVersion("1.0.0")]
-[assembly: AssemblyProduct("Managed.Commons.GetOptions.ForCompilers")]
-[assembly: AssemblyInformationalVersion("1.0")]
-[assembly: ComVisible(false)]
-[assembly: Guid("42c07ee4-628b-4178-818a-d0379b12da05")]
+[assembly: AssemblyInformationalVersion("1.0.0-Alpha")]
+
 [assembly: License(LicenseType.MIT)]

@@ -26,96 +26,104 @@ using System.Linq;
 
 namespace Commons.GetOptions
 {
-	public interface ICommand
-	{
-		string Description { get; }
+    public interface ICommand
+    {
+        string Description { get; }
 
-		string Name { get; }
+        string Name { get; }
 
-		void Execute(IEnumerable<string> args, ErrorReporter ReportError);
-	}
+        void Execute(IEnumerable<string> args, ErrorReporter ReportError);
+    }
 
-	public class Commands : IEqualityComparer<ICommand>
-	{
-		public readonly List<ICommand> AllCommands = new List<ICommand>();
-		public readonly OptionsContext Context = new OptionsContext();
+    public class Commands : IEqualityComparer<ICommand>
+    {
+        public readonly List<ICommand> AllCommands = new List<ICommand>();
+        public readonly OptionsContext Context = new OptionsContext();
 
-		public virtual string AdditionalBannerInfo { get { return null; } }
+        public virtual string AdditionalBannerInfo { get { return null; } }
 
-		public bool Equals(ICommand x, ICommand y)
-		{
-			return x.Name.Equals(y.Name, StringComparison.InvariantCultureIgnoreCase);
-		}
+        public bool Equals(ICommand x, ICommand y)
+        {
+            return x.Name.Equals(y.Name, StringComparison.InvariantCultureIgnoreCase);
+        }
 
-		public int GetHashCode(ICommand obj)
-		{
-			return obj.Name.GetHashCode();
-		}
+        public int GetHashCode(ICommand obj)
+        {
+            return obj.Name.GetHashCode();
+        }
 
-		public void ProcessArgs(string[] args, Func<int, string[]> exitFunc)
-		{
-			OptionList optionParser = new OptionList(this, Context, stopOnFirstNonOption: true);
-			optionParser.AdditionalBannerInfo = AdditionalBannerInfo;
-			if (args == null || args.Length == 0) {
-				optionParser.DoHelp();
-				return;
-			}
+        public void ProcessArgs(string[] args, Func<int, string[]> exitFunc)
+        {
+            OptionList optionParser = new OptionList(this, Context, stopOnFirstNonOption: true);
+            optionParser.AdditionalBannerInfo = AdditionalBannerInfo;
+            if (args == null || args.Length == 0)
+            {
+                optionParser.DoHelp();
+                return;
+            }
 
-			var helpCommand = new HelpCommand(AllCommands, optionParser, Context);
-			AllCommands.Add(helpCommand);
-			var commands = AllCommands.Distinct(this).OrderBy(command => command.Name.ToLowerInvariant()).ToList();
-			AllCommands.Clear();
-			AllCommands.AddRange(commands);
+            var helpCommand = new HelpCommand(AllCommands, optionParser, Context);
+            AllCommands.Add(helpCommand);
+            var commands = AllCommands.Distinct(this).OrderBy(command => command.Name.ToLowerInvariant()).ToList();
+            AllCommands.Clear();
+            AllCommands.AddRange(commands);
 
-			var remainingArgs = optionParser.ProcessArgs(args, exitFunc);
-			var commandName = remainingArgs.FirstOrDefault();
-			var commandArgs = remainingArgs.Skip(1).ToArray();
+            var remainingArgs = optionParser.ProcessArgs(args, exitFunc);
+            var commandName = remainingArgs.FirstOrDefault();
+            var commandArgs = remainingArgs.Skip(1).ToArray();
 
-			if (string.IsNullOrWhiteSpace(commandName)) {
-				optionParser.DoHelp();
-				return;
-			}
+            if (string.IsNullOrWhiteSpace(commandName))
+            {
+                optionParser.DoHelp();
+                return;
+            }
 
-			foreach (var command in AllCommands) {
-				if (commandName.Equals(command.Name, StringComparison.InvariantCultureIgnoreCase)) {
-					OptionList parser = new OptionList(command, Context);
-					parser.AdditionalBannerInfo = AdditionalBannerInfo;
-					command.Execute(parser.ProcessArgs(commandArgs, exitFunc), Context.ReportError);
-				}
-			}
-		}
-	}
+            foreach (var command in AllCommands)
+            {
+                if (commandName.Equals(command.Name, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    OptionList parser = new OptionList(command, Context);
+                    parser.AdditionalBannerInfo = AdditionalBannerInfo;
+                    command.Execute(parser.ProcessArgs(commandArgs, exitFunc), Context.ReportError);
+                }
+            }
+        }
+    }
 
-	public class HelpCommand : ICommand
-	{
-		public HelpCommand(List<ICommand> commands, OptionList optionParser, OptionsContext context)
-		{
-			_commands = commands;
-			_optionParser = optionParser;
-			_context = context;
-		}
+    public class HelpCommand : ICommand
+    {
+        public HelpCommand(List<ICommand> commands, OptionList optionParser, OptionsContext context)
+        {
+            _commands = commands;
+            _optionParser = optionParser;
+            _context = context;
+        }
 
-		public string Description { get { return "Show help about commands"; } }
+        public string Description { get { return "Show help about commands"; } }
 
-		public string Name { get { return "help"; } }
+        public string Name { get { return "help"; } }
 
-		public void Execute(IEnumerable<string> args, ErrorReporter ReportError)
-		{
-			var commandName = args.FirstOrDefault();
-			if (!string.IsNullOrWhiteSpace(commandName)) {
-				foreach (var command in _commands) {
-					if (commandName.Equals(command.Name, StringComparison.InvariantCultureIgnoreCase)) {
-						OptionList parser = new OptionList(command, _context);
-						parser.DoHelp();
-						return;
-					}
-				}
-			} else
-				_optionParser.DoHelp(_commands);
-		}
+        public void Execute(IEnumerable<string> args, ErrorReporter ReportError)
+        {
+            var commandName = args.FirstOrDefault();
+            if (!string.IsNullOrWhiteSpace(commandName))
+            {
+                foreach (var command in _commands)
+                {
+                    if (commandName.Equals(command.Name, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        OptionList parser = new OptionList(command, _context);
+                        parser.DoHelp();
+                        return;
+                    }
+                }
+            }
+            else
+                _optionParser.DoHelp(_commands);
+        }
 
-		private readonly List<ICommand> _commands;
-		private readonly OptionsContext _context;
-		private readonly OptionList _optionParser;
-	}
+        private readonly List<ICommand> _commands;
+        private readonly OptionsContext _context;
+        private readonly OptionList _optionParser;
+    }
 }

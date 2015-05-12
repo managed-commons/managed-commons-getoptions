@@ -24,16 +24,19 @@ using System;
 using System.Reflection;
 using Commons;
 
-[assembly: AssemblyTitle("Commons.GetOptions")]
-[assembly: AssemblyDescription("Command line arguments parsing library")]
-[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Rafael 'Monoman' Teixeira, Managed Commons Team")]
+[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCopyright("Copyright ©2002-2015 Rafael 'Monoman' Teixeira, Managed Commons Team")]
-[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: CLSCompliant(false)]
-[assembly: AssemblyVersion("2.0.0")]
-[assembly: AssemblyFileVersion("2.0.0")]
+[assembly: AssemblyDescription("Command line arguments parsing library")]
 [assembly: AssemblyProduct("Managed.Commons.GetOptions")]
-[assembly: AssemblyInformationalVersion("2.0.0")]
+[assembly: AssemblyTitle("Commons.GetOptions")]
+[assembly: AssemblyTrademark("")]
+
+[assembly: AssemblyVersion("2.1.0")]
+[assembly: AssemblyFileVersion("2.1.0")]
+[assembly: AssemblyInformationalVersion("2.1.0-Alpha")]
+
+[assembly: CLSCompliant(false)]
+
 [assembly: License(LicenseType.MIT)]

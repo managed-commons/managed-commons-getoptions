@@ -24,11 +24,11 @@ using System;
 
 namespace Commons.GetOptions
 {
-	[Flags]
-	public enum OptionsParsingMode
-	{
-		Linux = 1,
-		Windows = 2,
-		Both = 3
-	}
+    [Flags]
+    public enum OptionsParsingMode
+    {
+        Linux = 1,
+        Windows = 2,
+        Both = 3
+    }
 }
