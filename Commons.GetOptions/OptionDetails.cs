@@ -64,13 +64,15 @@ namespace Commons.GetOptions
         public ArrayList Values;
         public bool VBCStyleBoolean;
 
+        private string optionHelp = null;
+
         static OptionDetails()
         {
             RegisterTranslator(new Translator());
         }
 
         public OptionDetails(
-                    MemberInfo memberInfo,
+            MemberInfo memberInfo,
             OptionAttribute option,
             object optionBundle,
             OptionsParsingMode parsingMode,
@@ -81,44 +83,44 @@ namespace Commons.GetOptions
             ParsingMode = parsingMode;
             DontSplitOnCommas = dontSplitOnCommas;
             if (string.IsNullOrWhiteSpace(option.Name))
-                this.LongForm = (ShortForm == default(char)) ? memberInfo.Name : string.Empty;
+                LongForm = (ShortForm == default(char)) ? memberInfo.Name : string.Empty;
             else
-                this.LongForm = option.Name;
-            this.AlternateForm = option.AlternateForm;
-            this.ShortDescription = ExtractParamName(_(option.Description));
-            this.Occurs = 0;
-            this.OptionBundle = optionBundle;
-            this.BooleanOption = false;
-            this.MemberInfo = memberInfo;
-            this.NeedsParameter = false;
-            this.Values = null;
-            this.MaxOccurs = 1;
-            this.VBCStyleBoolean = option.VBCStyleBoolean;
-            this.SecondLevelHelp = option.SecondLevelHelp;
-            this.Hidden = false; // TODO: check other attributes
+                LongForm = option.Name;
+            AlternateForm = option.AlternateForm;
+            ShortDescription = ExtractParamName(_(option.Description));
+            Occurs = 0;
+            OptionBundle = optionBundle;
+            BooleanOption = false;
+            MemberInfo = memberInfo;
+            NeedsParameter = false;
+            Values = null;
+            MaxOccurs = 1;
+            VBCStyleBoolean = option.VBCStyleBoolean;
+            SecondLevelHelp = option.SecondLevelHelp;
+            Hidden = false; // TODO: check other attributes
 
-            this.ParameterType = TypeOfMember(memberInfo);
-            var NonDefaultMessage = string.Format("MaxOccurs set to non default value ({0}) for a [{1}] option", option.MaxOccurs, this.MemberInfo);
-            if (this.ParameterType != null)
+            ParameterType = TypeOfMember(memberInfo);
+            var NonDefaultMessage = string.Format("MaxOccurs set to non default value ({0}) for a [{1}] option", option.MaxOccurs, MemberInfo);
+            if (ParameterType != null)
             {
-                if (this.ParameterType.FullName != "System.Boolean")
+                if (ParameterType.FullName != "System.Boolean")
                 {
-                    if (this.LongForm.IndexOf(':') >= 0)
-                        throw new InvalidOperationException(string.Format("Options with an embedded colon (':') in their visible name must be boolean!!! [{0} isn't]", this.MemberInfo));
+                    if (LongForm.IndexOf(':') >= 0)
+                        throw new InvalidOperationException(string.Format("Options with an embedded colon (':') in their visible name must be boolean!!! [{0} isn't]", MemberInfo));
 
-                    this.NeedsParameter = true;
+                    NeedsParameter = true;
 
                     if (option.MaxOccurs != 1)
                     {
-                        if (this.ParameterType.IsArray)
+                        if (ParameterType.IsArray)
                         {
-                            this.Values = new ArrayList();
-                            this.MaxOccurs = option.MaxOccurs;
+                            Values = new ArrayList();
+                            MaxOccurs = option.MaxOccurs;
                         }
                         else
                         {
-                            if (this.MemberInfo is MethodInfo || this.MemberInfo is PropertyInfo)
-                                this.MaxOccurs = option.MaxOccurs;
+                            if (MemberInfo is MethodInfo || MemberInfo is PropertyInfo)
+                                MaxOccurs = option.MaxOccurs;
                             else
                                 throw new InvalidOperationException(NonDefaultMessage);
                         }
@@ -126,11 +128,11 @@ namespace Commons.GetOptions
                 }
                 else
                 {
-                    this.BooleanOption = true;
+                    BooleanOption = true;
                     if (option.MaxOccurs != 1)
                     {
-                        if (this.MemberInfo is MethodInfo || this.MemberInfo is PropertyInfo)
-                            this.MaxOccurs = option.MaxOccurs;
+                        if (MemberInfo is MethodInfo || MemberInfo is PropertyInfo)
+                            MaxOccurs = option.MaxOccurs;
                         else
                             throw new InvalidOperationException(NonDefaultMessage);
                     }
@@ -149,14 +151,18 @@ namespace Commons.GetOptions
                     shortPrefix = "/";
                     longPrefix = "/";
                 }
-                if (this.ShortForm != default(char))
-                    return shortPrefix + this.ShortForm;
+                if (ShortForm != default(char))
+                    return shortPrefix + ShortForm;
                 else
-                    return longPrefix + this.LongForm;
+                    return longPrefix + LongForm;
             }
         }
 
         public string ParamName { get { return paramName; } }
+
+        internal string Key { get { return (ShortForm == default(char)) ? LongForm : ShortForm + " " + LongForm; } }
+
+        private bool AddingOneMoreExceedsMaxOccurs { get { return HowManyBeforeExceedingMaxOccurs(1) < 1; } }
 
         public static void LinkAlternatesInsideList(List<OptionDetails> list)
         {
@@ -221,7 +227,7 @@ namespace Commons.GetOptions
             {
                 string shortPrefix;
                 string longPrefix;
-                bool hasLongForm = (this.LongForm != null && this.LongForm != string.Empty);
+                bool hasLongForm = (LongForm != null && LongForm != string.Empty);
                 if (ParsingMode == OptionsParsingMode.Windows)
                 {
                     shortPrefix = "/";
@@ -233,8 +239,8 @@ namespace Commons.GetOptions
                     longPrefix = "--";
                 }
                 optionHelp = "  ";
-                optionHelp += (this.ShortForm != default(char)) ? shortPrefix + this.ShortForm + " " : "   ";
-                optionHelp += hasLongForm ? longPrefix + this.LongForm : "";
+                optionHelp += (ShortForm != default(char)) ? shortPrefix + ShortForm + " " : "   ";
+                optionHelp += hasLongForm ? longPrefix + LongForm : "";
                 if (NeedsParameter)
                 {
                     if (hasLongForm)
@@ -246,9 +252,9 @@ namespace Commons.GetOptions
                     optionHelp += "[+|-]";
                 }
                 optionHelp += "\t";
-                if (this.AlternateForm != string.Empty && this.AlternateForm != null)
-                    optionHelp += _("Also ") + shortPrefix + this.AlternateForm + (NeedsParameter ? (":" + ParamName) : "") + ". ";
-                optionHelp += this.ShortDescription;
+                if (AlternateForm != string.Empty && AlternateForm != null)
+                    optionHelp += _("Also ") + shortPrefix + AlternateForm + (NeedsParameter ? (":" + ParamName) : "") + ". ";
+                optionHelp += ShortDescription;
             }
             return optionHelp;
         }
@@ -273,12 +279,6 @@ namespace Commons.GetOptions
                     System.Environment.Exit(1);
             }
         }
-
-        internal string Key { get { return (this.ShortForm == default(char)) ? this.LongForm : this.ShortForm + " " + this.LongForm; } }
-
-        private string optionHelp = null;
-
-        private bool AddingOneMoreExceedsMaxOccurs { get { return HowManyBeforeExceedingMaxOccurs(1) < 1; } }
 
         private static System.Type TypeOfMember(MemberInfo memberInfo)
         {
