@@ -1,0 +1,4 @@
+language: csharp
+sudo: false  # use the new container-based infrastructure
+script:
+  - . ./build.sh
