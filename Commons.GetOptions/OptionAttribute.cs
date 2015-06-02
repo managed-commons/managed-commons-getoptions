@@ -21,13 +21,15 @@
 // SOFTWARE.
 
 using System;
+using Commons.Translation;
+using static Commons.Translation.TranslationService;
 
 namespace Commons.GetOptions
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method)]
     public class OptionAttribute : Attribute
     {
-        public OptionAttribute(string shortDescription)
+        public OptionAttribute([Translatable] string shortDescription)
         {
             Description = shortDescription;
             ShortForm = default(char);
@@ -37,6 +39,8 @@ namespace Commons.GetOptions
         public string AlternateForm { get; set; }
 
         public string Description { get; set; }
+
+        public string TranslatedDescription { get { return _(Description); } }
 
         // negative means there is no limit
         public int MaxOccurs { get; set; }

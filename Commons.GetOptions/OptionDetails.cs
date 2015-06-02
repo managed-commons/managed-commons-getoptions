@@ -87,7 +87,7 @@ namespace Commons.GetOptions
             else
                 LongForm = option.Name;
             AlternateForm = option.AlternateForm;
-            ShortDescription = ExtractParamName(_(option.Description));
+            ShortDescription = ExtractParamName(option.TranslatedDescription);
             Occurs = 0;
             OptionBundle = optionBundle;
             BooleanOption = false;

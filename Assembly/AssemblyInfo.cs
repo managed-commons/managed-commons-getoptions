@@ -33,9 +33,9 @@ using Commons;
 [assembly: AssemblyTitle("Commons.GetOptions")]
 [assembly: AssemblyTrademark("")]
 
-[assembly: AssemblyVersion("2.2.1")]
-[assembly: AssemblyFileVersion("2.2.1")]
-[assembly: AssemblyInformationalVersion("2.2.1-Alpha")]
+[assembly: AssemblyVersion("2.3.0")]
+[assembly: AssemblyFileVersion("2.3.0")]
+[assembly: AssemblyInformationalVersion("2.3.0-Alpha")]
 
 [assembly: CLSCompliant(false)]
 
