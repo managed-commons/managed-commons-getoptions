@@ -27,8 +27,5 @@ namespace Commons.GetOptions
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method)]
     public class KillInheritedOptionAttribute : Attribute
     {
-        public KillInheritedOptionAttribute()
-        {
-        }
     }
 }

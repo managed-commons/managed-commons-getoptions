@@ -7,7 +7,7 @@ namespace Commons.GetOptions
     {
         public AppTranslator()
         {
-            AddLocale("pt", new Dictionary<string, string>()
+            AddLocale("pt", new Dictionary<string, string>
             {
                 ["Command {0} executed!"] = "Comando {0} executado!",
                 ["Exercises Commons.GetOptions features"] = "Exercita algumas funcionalidades da Commons.GetOptions",
@@ -17,7 +17,7 @@ namespace Commons.GetOptions
                 ["Only gamma command needs this set!"] = "Só o comando gamma precisa deste argumento!",
                 ["Second mock command"] = "Segundo falso comando",
                 ["Should have been gamma corrected!!!"] = "Deve ter o gamma corrigido!!!",
-                ["Third mock command"] = "Terceiro falso comando",
+                ["Third mock command"] = "Terceiro falso comando"
             });
         }
     }

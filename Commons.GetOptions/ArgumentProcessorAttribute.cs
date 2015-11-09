@@ -27,8 +27,5 @@ namespace Commons.GetOptions
     [AttributeUsage(AttributeTargets.Method)]
     public class ArgumentProcessorAttribute : Attribute
     {
-        public ArgumentProcessorAttribute()
-        {
-        }
     }
 }

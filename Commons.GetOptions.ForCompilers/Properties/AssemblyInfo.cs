@@ -33,12 +33,9 @@ using Commons;
 [assembly: AssemblyProduct("Managed.Commons.GetOptions.ForCompilers")]
 [assembly: AssemblyTitle("Commons.GetOptions.ForCompilers")]
 [assembly: AssemblyTrademark("")]
-
 [assembly: CLSCompliant(false)]
 [assembly: ComVisible(false)]
-
 [assembly: AssemblyVersion("1.0.0")]
 [assembly: AssemblyFileVersion("1.0.0")]
 [assembly: AssemblyInformationalVersion("1.0.0-Alpha")]
-
 [assembly: License(LicenseType.MIT)]

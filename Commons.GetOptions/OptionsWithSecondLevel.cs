@@ -30,9 +30,6 @@ namespace Commons.GetOptions
         }
 
         [Option("Show an additional help list", Name = "help2")]
-        public virtual WhatToDoNext DoHelp2()
-        {
-            return OptionParser.DoHelp2();
-        }
+        public virtual WhatToDoNext DoHelp2() => OptionParser.DoHelp2();
     }
 }

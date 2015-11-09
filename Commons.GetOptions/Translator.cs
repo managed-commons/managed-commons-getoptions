@@ -29,7 +29,7 @@ namespace Commons.GetOptions
     {
         public Translator()
         {
-            AddLocale("pt", new Dictionary<string, string>()
+            AddLocale("pt", new Dictionary<string, string>
             {
                 ["\nPlease report bugs {0} <{1}>"] = "\nPor favor, reporte bugs {0} <{1}>",
                 ["Also "] = "Também ",

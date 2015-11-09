@@ -26,6 +26,8 @@ namespace Commons.GetOptions
 {
     public class Options
     {
+#pragma warning disable RECS0021 // Warns about calls to virtual member functions occuring in the constructor
+
         public Options(OptionsContext context)
         {
             Context = context;
@@ -34,22 +36,15 @@ namespace Commons.GetOptions
             OptionParser.AdditionalBannerInfo = AdditionalBannerInfo;
         }
 
+#pragma warning restore RECS0021 // Warns about calls to virtual member functions occuring in the constructor
+
         [Option("Display version and licensing information", ShortForm = 'V', Name = "version")]
-        public virtual WhatToDoNext DoAbout()
-        {
-            return OptionParser.DoAbout();
-        }
+        public virtual WhatToDoNext DoAbout() => OptionParser.DoAbout();
 
         [Option("Show this help list", ShortForm = '?', Name = "help")]
-        public virtual WhatToDoNext DoHelp()
-        {
-            return OptionParser.DoHelp();
-        }
+        public virtual WhatToDoNext DoHelp() => OptionParser.DoHelp();
 
-        public Arguments ProcessArgs(string[] args, Func<int, string[]> exitFunc)
-        {
-            return OptionParser.ProcessArgs(args, exitFunc);
-        }
+        public Arguments ProcessArgs(string[] args, Func<int, string[]> exitFunc) => OptionParser.ProcessArgs(args, exitFunc);
 
         public void Reset()
         {
@@ -64,7 +59,7 @@ namespace Commons.GetOptions
         protected readonly OptionsContext Context;
         protected readonly OptionList OptionParser;
 
-        protected virtual string AdditionalBannerInfo { get { return null; } }
+        protected virtual string AdditionalBannerInfo => null;
 
         protected virtual void InitializeOtherDefaults()
         {

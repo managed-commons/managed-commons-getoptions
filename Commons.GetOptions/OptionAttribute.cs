@@ -40,17 +40,13 @@ namespace Commons.GetOptions
 
         public string Description { get; set; }
 
-        public string TranslatedDescription { get { return _(Description); } }
-
         // negative means there is no limit
         public int MaxOccurs { get; set; }
 
         public string Name { get; set; }
-
         public bool SecondLevelHelp { get; set; }
-
         public char ShortForm { get; set; }
-
+        public string TranslatedDescription => _(Description);
         public bool VBCStyleBoolean { get; set; }
     }
 }

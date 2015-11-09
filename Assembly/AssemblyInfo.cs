@@ -32,11 +32,8 @@ using Commons;
 [assembly: AssemblyProduct("Managed.Commons.GetOptions")]
 [assembly: AssemblyTitle("Commons.GetOptions")]
 [assembly: AssemblyTrademark("")]
-
 [assembly: AssemblyVersion("2.3.0")]
 [assembly: AssemblyFileVersion("2.3.0")]
-[assembly: AssemblyInformationalVersion("2.3.0-Alpha")]
-
+[assembly: AssemblyInformationalVersion("2.3.0-Alpha2")]
 [assembly: CLSCompliant(false)]
-
 [assembly: License(LicenseType.MIT)]

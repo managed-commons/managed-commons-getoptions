@@ -53,8 +53,8 @@ namespace Commons.Compilers
 
         public FileToCompile(string filename, Encoding encoding)
         {
-            this.Filename = filename;
-            this.Encoding = encoding;
+            Filename = filename;
+            Encoding = encoding;
         }
     }
 
@@ -196,24 +196,17 @@ namespace Commons.Compilers
         //	MaxOccurs = -1, Name = "win32resource")]
         public string AddedWin32resource { set { Win32Resources.Add(value); } }
 
-        public virtual string[] AssembliesToReferenceSoftly
-        {
-            get
-            {
-                // For now the "default config" is hardcoded we can move this outside later
-                return new string[] { "System", "System.Data", "System.Xml" };
-            }
-        }
+        // For now the "default config" is hardcoded we can move this outside later
+        public virtual string[] AssembliesToReferenceSoftly => new string[] { "System", "System.Data", "System.Xml" };
 
-        public bool BeQuiet { get { return DontShowBanner || SuccintErrorDisplay; } }
+        public bool BeQuiet => DontShowBanner || SuccintErrorDisplay;
 
         [Option("Select codepage by {ID} (number, 'utf8' or 'reset') to process following source files", MaxOccurs = -1, Name = "codepage")]
         public string CurrentCodepage
         {
             set
             {
-                switch (value.ToLower())
-                {
+                switch (value.ToLower()) {
                     case "reset":
                         _currentEncoding = null;
                         break;
@@ -224,16 +217,11 @@ namespace Commons.Compilers
                         break;
 
                     default:
-                        try
-                        {
+                        try {
                             _currentEncoding = Encoding.GetEncoding(int.Parse(value));
-                        }
-                        catch (NotSupportedException)
-                        {
+                        } catch (NotSupportedException) {
                             Context.ReportError(0, string.Format("Ignoring unsupported codepage number {0}.", value));
-                        }
-                        catch (Exception)
-                        {
+                        } catch (Exception) {
                             Context.ReportError(0, string.Format("Ignoring unsupported codepage ID {0}.", value));
                         }
                         break;
@@ -268,8 +256,7 @@ namespace Commons.Compilers
         {
             set
             {
-                foreach (string item in value.Split(','))
-                {
+                foreach (string item in value.Split(',')) {
                     string[] dados = item.Split('=');
                     if (dados.Length > 1)
                         Defines.Add(dados[0], dados[1]);
@@ -293,8 +280,7 @@ namespace Commons.Compilers
         {
             get
             {
-                if (SourceFilesToCompile.Count == 0)
-                {
+                if (SourceFilesToCompile.Count == 0) {
                     if (!BeQuiet)
                         DoHelp();
                     return true;
@@ -319,17 +305,13 @@ namespace Commons.Compilers
             }
             get
             {
-                if (_outputFileName == null)
-                {
-                    int pos = _firstSourceFile.LastIndexOf(".");
+                if (_outputFileName == null) {
+                    int pos = _firstSourceFile.LastIndexOf(".", StringComparison.Ordinal);
 
                     if (pos > 0)
                         _outputFileName = _firstSourceFile.Substring(0, pos);
                     else
                         _outputFileName = _firstSourceFile;
-                    // TODO: what Codegen does here to get hid of this dependency
-                    //					string bname = CodeGen.Basename(outputFileName);
-                    //					if (bname.IndexOf(".") == -1)
                     _outputFileName += _targetFileExtension;
                 }
                 return _outputFileName;
@@ -339,12 +321,14 @@ namespace Commons.Compilers
         [Option("Displays time stamps of various compiler events", Name = "timestamp", SecondLevelHelp = true)]
         public virtual bool PrintTimeStamps
         {
+#pragma warning disable RECS0029 // Warns about property or indexer setters and event adders or removers that do not use the value parameter
             set
             {
                 _printTimeStamps = true;
                 _last_time = DateTime.Now;
                 DebugListOfArguments.Add("timestamp");
             }
+#pragma warning restore RECS0029 // Warns about property or indexer setters and event adders or removers that do not use the value parameter
         }
 
         // code generation options
@@ -352,24 +336,20 @@ namespace Commons.Compilers
         [Option("Remove integer checks. Default off.", SecondLevelHelp = true, VBCStyleBoolean = true)]
         public virtual bool removeintchecks { set { CheckedContext = !value; } }
 
-        public int[] WarningsToIgnore { get { return (int[])_warningsToIgnore.ToArray(typeof(int)); } }
+        public int[] WarningsToIgnore => (int[])_warningsToIgnore.ToArray(typeof(int));
 
-        public static OptionsContext BuildDefaultContext(ErrorReporter reportError)
+        public static OptionsContext BuildDefaultContext(ErrorReporter reportError) => new OptionsContext
         {
-            return new OptionsContext()
-            {
-                BreakSingleDashManyLettersIntoManyOptions = false,
-                DontSplitOnCommas = true,
-                EndOptionProcessingWithDoubleDash = true,
-                ParsingMode = OptionsParsingMode.Both,
-                ReportError = reportError ?? OptionsContext.DefaultErrorReporter
-            };
-        }
+            BreakSingleDashManyLettersIntoManyOptions = false,
+            DontSplitOnCommas = true,
+            EndOptionProcessingWithDoubleDash = true,
+            ParsingMode = OptionsParsingMode.Both,
+            ReportError = reportError ?? OptionsContext.DefaultErrorReporter
+        };
 
         public void AdjustCodegenWhenTargetIsNetModule(AssemblyBuilder assemblyBuilder)
         {
-            if (TargetFileType == TargetType.Module)
-            {
+            if (TargetFileType == TargetType.Module) {
                 StartTime("Adjusting AssemblyBuilder for NetModule target");
                 PropertyInfo module_only = typeof(AssemblyBuilder).GetProperty("IsModuleOnly", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                 if (module_only == null)
@@ -387,8 +367,7 @@ namespace Commons.Compilers
             if (_firstSourceFile == null)
                 _firstSourceFile = fileName;
 
-            if (!_sourceFiles.Contains(fileName))
-            {
+            if (!_sourceFiles.Contains(fileName)) {
                 SourceFilesToCompile.Add(new FileToCompile(fileName, _currentEncoding));
                 _sourceFiles.Add(fileName, fileName);
             }
@@ -405,8 +384,7 @@ namespace Commons.Compilers
         {
             int errors = 0;
 
-            if (NetModulesToAdd.Count > 0)
-            {
+            if (NetModulesToAdd.Count > 0) {
                 StartTime("Loading added netmodules");
 
                 MethodInfo adder_method = typeof(AssemblyBuilder).GetMethod("AddModule", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -449,65 +427,51 @@ namespace Commons.Compilers
         }
 
         //		[Option("[NOT IMPLEMENTED YET]Include all files in the current directory and subdirectories according to the {wildcard}", Name = "recurse")]
-        public WhatToDoNext Recurse(string wildcard)
-        {
-            //AddFiles (DirName, true); // TODO wrong semantics
-            return WhatToDoNext.GoAhead;
-        }
+        //AddFiles (DirName, true); // TODO wrong semantics
+        public WhatToDoNext Recurse(string wildcard) => WhatToDoNext.GoAhead;
 
         public bool ReferencePackage(string packageName)
         {
-            if (packageName == "")
-            {
+            if (packageName == "") {
                 DoAbout();
                 return false;
             }
 
-            ProcessStartInfo pi = new ProcessStartInfo();
+            var pi = new ProcessStartInfo();
             pi.FileName = "pkg-config";
             pi.RedirectStandardOutput = true;
             pi.UseShellExecute = false;
             pi.Arguments = "--libs " + packageName;
             Process p = null;
-            try
-            {
+            try {
                 p = Process.Start(pi);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Context.ReportError(0, "Couldn't run pkg-config: " + e.Message);
                 return false;
             }
 
-            if (p.StandardOutput == null)
-            {
+            if (p.StandardOutput == null) {
                 Context.ReportError(0, "Specified package did not return any information");
             }
             string pkgout = p.StandardOutput.ReadToEnd();
             p.WaitForExit();
-            if (p.ExitCode != 0)
-            {
+            if (p.ExitCode != 0) {
                 Context.ReportError(0, "Error running pkg-config. Check the above output.");
                 return false;
             }
             p.Close();
 
-            if (pkgout != null)
-            {
+            if (pkgout != null) {
                 string[] xargs = pkgout.Trim(new Char[] { ' ', '\n', '\r', '\t' }).
                     Split(new Char[] { ' ', '\t' });
-                foreach (string arg in xargs)
-                {
+                foreach (string arg in xargs) {
                     string[] zargs = arg.Split(':', '=');
-                    try
-                    {
+                    try {
                         if (zargs.Length > 1)
                             AddedReference = zargs[1];
                         else
                             AddedReference = arg;
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         Context.ReportError(0, "Something wrong with argument (" + arg + ") in 'pkg-config --libs' output: " + e.Message);
                         return false;
                     }
@@ -518,10 +482,7 @@ namespace Commons.Compilers
         }
 
         [Option("References packages listed. {packagelist}=package,...", MaxOccurs = -1, Name = "pkg")]
-        public WhatToDoNext ReferenceSomePackage(string packageName)
-        {
-            return ReferencePackage(packageName) ? WhatToDoNext.GoAhead : WhatToDoNext.AbandonProgram;
-        }
+        public WhatToDoNext ReferenceSomePackage(string packageName) => ReferencePackage(packageName) ? WhatToDoNext.GoAhead : WhatToDoNext.AbandonProgram;
 
         [Option("Debugger {arguments}", Name = "debug-args", SecondLevelHelp = true)]
         public WhatToDoNext SetDebugArgs(string args)
@@ -540,8 +501,7 @@ namespace Commons.Compilers
         [Option("Specifies the target {type} for the output file (exe [default], winexe, library, module)", ShortForm = 't', Name = "target")]
         public WhatToDoNext SetTarget(string type)
         {
-            switch (type.ToLower())
-            {
+            switch (type.ToLower()) {
                 case "library":
                     TargetFileType = TargetType.Library;
                     _targetFileExtension = ".dll";
@@ -595,43 +555,49 @@ namespace Commons.Compilers
             Environment.Exit(1);
         }
 
-        private Encoding _currentEncoding = null;
-        private string _firstSourceFile = null;
+        Encoding _currentEncoding = null;
+        string _firstSourceFile = null;
 
         //
         // Last time we took the time
         //
-        private DateTime _last_time;
+        DateTime _last_time;
 
-        private string _outputFileName = null;
-        private bool _printTimeStamps = false;
-        private Hashtable _sourceFiles = new Hashtable();
-        private string _targetFileExtension = ".exe";
-        private ArrayList _warningsToIgnore = new ArrayList();
+        string _outputFileName = null;
+        bool _printTimeStamps = false;
+        Hashtable _sourceFiles = new Hashtable();
+        string _targetFileExtension = ".exe";
+        ArrayList _warningsToIgnore = new ArrayList();
 
-        private bool AddFiles(string spec, bool recurse)
+        static string[] GetDirs(string path)
+        {
+            try {
+                return Directory.GetDirectories(path);
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+            } catch {
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+            }
+
+            return new string[0];
+        }
+
+        bool AddFiles(string spec, bool recurse)
         {
             string path, pattern;
 
             SplitPathAndPattern(spec, out path, out pattern);
-            if (pattern.IndexOf("*") == -1)
-            {
+            if (pattern.IndexOf("*", StringComparison.Ordinal) == -1) {
                 DefaultArgumentProcessor(spec);
                 return true;
             }
 
             string[] files = null;
-            try
-            {
+            try {
                 files = Directory.GetFiles(path, pattern);
-            }
-            catch (System.IO.DirectoryNotFoundException)
-            {
+            } catch (System.IO.DirectoryNotFoundException) {
                 Context.ReportError(2001, "Source file '" + spec + "' could not be found");
                 return false;
-            }
-            catch (System.IO.IOException)
-            {
+            } catch (System.IO.IOException) {
                 Context.ReportError(2001, "Source file '" + spec + "' could not be found");
                 return false;
             }
@@ -641,18 +607,7 @@ namespace Commons.Compilers
             if (!recurse)
                 return true;
 
-            string[] dirs = null;
-
-            try
-            {
-                dirs = Directory.GetDirectories(path);
-            }
-            catch
-            {
-            }
-
-            foreach (string d in dirs)
-            {
+            foreach (string d in GetDirs(path)) {
                 // Don't include path in this string, as each
                 // directory entry already does
                 AddFiles(d + "/" + pattern, true);
@@ -661,43 +616,34 @@ namespace Commons.Compilers
             return true;
         }
 
-        private void LoadAssembly(AssemblyAdder adder, string assemblyName, ref int errors, bool soft)
+        void LoadAssembly(AssemblyAdder adder, string assemblyName, ref int errors, bool soft)
         {
             Assembly a = null;
             string total_log = "";
 
-            try
-            {
+            try {
                 char[] path_chars = { '/', '\\' };
 
                 if (assemblyName.IndexOfAny(path_chars) != -1)
                     a = Assembly.LoadFrom(assemblyName);
-                else
-                {
+                else {
                     string ass = assemblyName;
-                    if (ass.EndsWith(".dll"))
+                    if (ass.EndsWith(".dll", StringComparison.Ordinal))
                         ass = assemblyName.Substring(0, assemblyName.Length - 4);
                     a = Assembly.Load(ass);
                 }
                 adder(a);
                 return;
-            }
-            catch (FileNotFoundException)
-            {
-                if (PathsToSearchForLibraries != null)
-                {
-                    foreach (string dir in PathsToSearchForLibraries)
-                    {
+            } catch (FileNotFoundException) {
+                if (PathsToSearchForLibraries != null) {
+                    foreach (string dir in PathsToSearchForLibraries) {
                         string full_path = Path.Combine(dir, assemblyName + ".dll");
 
-                        try
-                        {
+                        try {
                             a = Assembly.LoadFrom(full_path);
                             adder(a);
                             return;
-                        }
-                        catch (FileNotFoundException ff)
-                        {
+                        } catch (FileNotFoundException ff) {
                             total_log += ff.FusionLog;
                             continue;
                         }
@@ -707,80 +653,55 @@ namespace Commons.Compilers
                     return;
 
                 Context.ReportError(6, "Can not find assembly '" + assemblyName + "'\nLog: " + total_log);
-            }
-            catch (BadImageFormatException f)
-            {
+            } catch (BadImageFormatException f) {
                 Context.ReportError(6, "Bad file format while loading assembly\nLog: " + f.FusionLog);
-            }
-            catch (FileLoadException f)
-            {
+            } catch (FileLoadException f) {
                 Context.ReportError(6, "File Load Exception: " + assemblyName + "\nLog: " + f.FusionLog);
-            }
-            catch (ArgumentNullException)
-            {
+            } catch (ArgumentNullException) {
                 Context.ReportError(6, "Argument Null exception");
             }
 
             errors++;
         }
 
-        private void LoadModule(MethodInfo adder_method, AssemblyBuilder assemblyBuilder, ModuleAdder adder, string module, ref int errors)
+        void LoadModule(MethodInfo adder_method, AssemblyBuilder assemblyBuilder, ModuleAdder adder, string module, ref int errors)
         {
             System.Reflection.Module m;
             string total_log = "";
 
-            try
-            {
-                try
-                {
+            try {
+                try {
                     m = (System.Reflection.Module)adder_method.Invoke(assemblyBuilder, new object[] { module });
-                }
-                catch (TargetInvocationException ex)
-                {
+                } catch (TargetInvocationException ex) {
                     throw ex.InnerException;
                 }
                 adder(m);
-            }
-            catch (FileNotFoundException)
-            {
-                foreach (string dir in PathsToSearchForLibraries)
-                {
+            } catch (FileNotFoundException) {
+                foreach (string dir in PathsToSearchForLibraries) {
                     string full_path = Path.Combine(dir, module);
-                    if (!module.EndsWith(".netmodule"))
+                    if (!module.EndsWith(".netmodule", StringComparison.Ordinal))
                         full_path += ".netmodule";
 
-                    try
-                    {
-                        try
-                        {
+                    try {
+                        try {
                             m = (System.Reflection.Module)adder_method.Invoke(assemblyBuilder, new object[] { full_path });
-                        }
-                        catch (TargetInvocationException ex)
-                        {
+                        } catch (TargetInvocationException ex) {
                             throw ex.InnerException;
                         }
                         adder(m);
                         return;
-                    }
-                    catch (FileNotFoundException ff)
-                    {
+                    } catch (FileNotFoundException ff) {
                         total_log += ff.FusionLog;
                         continue;
                     }
                 }
                 Context.ReportError(6, "Cannot find module `" + module + "'");
                 WriteLine("Log: \n" + total_log);
-            }
-            catch (BadImageFormatException f)
-            {
+            } catch (BadImageFormatException f) {
                 Context.ReportError(6, "Cannot load module (bad file format)" + f.FusionLog);
-            }
-            catch (FileLoadException f)
-            {
+            } catch (FileLoadException f) {
                 Context.ReportError(6, "Cannot load module " + f.FusionLog);
-            }
-            catch (ArgumentNullException)
-            {
+            } catch (ArgumentNullException) {
                 Context.ReportError(6, "Cannot load module (null argument)");
             }
             errors++;
@@ -789,31 +710,26 @@ namespace Commons.Compilers
         //
         // Given a path specification, splits the path from the file/pattern
         //
-        private void SplitPathAndPattern(string spec, out string path, out string pattern)
+        void SplitPathAndPattern(string spec, out string path, out string pattern)
         {
-            int p = spec.LastIndexOf("/");
-            if (p != -1)
-            {
+            int p = spec.LastIndexOf("/", StringComparison.Ordinal);
+            if (p != -1) {
                 //
                 // Windows does not like /file.cs, switch that to:
                 // "\", "file.cs"
                 //
-                if (p == 0)
-                {
+                if (p == 0) {
                     path = "\\";
                     pattern = spec.Substring(1);
-                }
-                else
-                {
+                } else {
                     path = spec.Substring(0, p);
                     pattern = spec.Substring(p + 1);
                 }
                 return;
             }
 
-            p = spec.LastIndexOf("\\");
-            if (p != -1)
-            {
+            p = spec.LastIndexOf("\\", StringComparison.Ordinal);
+            if (p != -1) {
                 path = spec.Substring(0, p);
                 pattern = spec.Substring(p + 1);
                 return;

@@ -30,7 +30,6 @@ namespace TestApp
     internal class AppCommands : Commands
     {
         public AppCommands()
-            : base()
         {
             AllCommands.Add(new GammaCommand());
             AllCommands.Add(new AlphaCommand());
@@ -38,14 +37,14 @@ namespace TestApp
             AllCommands.Add(new ThetaCommand());
         }
 
-        private class AlphaCommand : ICommand
+        class AlphaCommand : ICommand
         {
             [Option("Only gamma command needs this set!")]
             public bool GammaCorrected = false;
 
-            public virtual string Description { get { return _("First mock command"); } }
+            public virtual string Description => _("First mock command");
 
-            public virtual string Name { get { return "alpha"; } }
+            public virtual string Name => "alpha";
 
             public virtual void Execute(IEnumerable<string> args, ErrorReporter ReportError)
             {
@@ -55,16 +54,16 @@ namespace TestApp
 
         private class BetaCommand : AlphaCommand
         {
-            public override string Description { get { return _("Second mock command"); } }
+            public override string Description => _("Second mock command");
 
-            public override string Name { get { return "beta"; } }
+            public override string Name => "beta";
         }
 
-        private class GammaCommand : AlphaCommand
+        class GammaCommand : AlphaCommand
         {
-            public override string Description { get { return _("Third mock command"); } }
+            public override string Description => _("Third mock command");
 
-            public override string Name { get { return "gamma"; } }
+            public override string Name => "gamma";
 
             public override void Execute(IEnumerable<string> args, ErrorReporter ReportError)
             {
@@ -75,11 +74,11 @@ namespace TestApp
             }
         }
 
-        private class ThetaCommand : AlphaCommand
+        class ThetaCommand : AlphaCommand
         {
-            public override string Description { get { return _("Fourth mock command"); } }
+            public override string Description => _("Fourth mock command");
 
-            public override string Name { get { return "theta"; } }
+            public override string Name => "theta";
         }
     }
 }

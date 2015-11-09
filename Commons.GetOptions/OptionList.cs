@@ -39,9 +39,9 @@ namespace Commons.GetOptions
         public OptionList(object optionBundle, OptionsContext context, bool stopOnFirstNonOption = false)
         {
             if (optionBundle == null)
-                throw new ArgumentNullException("optionBundle");
+                throw new ArgumentNullException(nameof(optionBundle));
             if (context == null)
-                throw new ArgumentNullException("context");
+                throw new ArgumentNullException(nameof(context));
 
             Type optionsType = optionBundle.GetType();
             _optionBundle = optionBundle;
@@ -49,20 +49,15 @@ namespace Commons.GetOptions
             _stopOnFirstNonOption = stopOnFirstNonOption;
             _assemblyInfo = AssemblyInformation.FromEntryAssembly.WithDefaults;
 
-            foreach (MemberInfo mi in optionsType.GetMembers())
-            {
+            foreach (MemberInfo mi in optionsType.GetMembers()) {
                 object[] attribs = mi.GetCustomAttributes(typeof(KillInheritedOptionAttribute), true);
-                if (attribs == null || attribs.Length == 0)
-                {
+                if (attribs == null || attribs.Length == 0) {
                     attribs = mi.GetCustomAttributes(typeof(OptionAttribute), true);
-                    if (attribs != null && attribs.Length > 0)
-                    {
-                        OptionDetails option = new OptionDetails(mi, (OptionAttribute)attribs[0], optionBundle, _context.ParsingMode, false);
+                    if (attribs != null && attribs.Length > 0) {
+                        var option = new OptionDetails(mi, (OptionAttribute)attribs[0], optionBundle, _context.ParsingMode, false);
                         _list.Add(option);
                         _hasSecondLevelHelp = _hasSecondLevelHelp || option.SecondLevelHelp;
-                    }
-                    else if (mi.DeclaringType == mi.ReflectedType)
-                    {    // not inherited
+                    } else if (mi.DeclaringType == mi.ReflectedType) {    // not inherited
                         attribs = mi.GetCustomAttributes(typeof(ArgumentProcessorAttribute), true);
                         if (attribs != null && attribs.Length > 0)
                             AddArgumentProcessor(mi);
@@ -72,8 +67,7 @@ namespace Commons.GetOptions
 
             if (_argumentProcessor == null) // try to find an inherited one
                 foreach (MemberInfo mi in optionsType.GetMembers())
-                    if (mi.DeclaringType != mi.ReflectedType)
-                    {   // inherited
+                    if (mi.DeclaringType != mi.ReflectedType) {   // inherited
                         object[] attribs = mi.GetCustomAttributes(typeof(ArgumentProcessorAttribute), true);
                         if (attribs != null && attribs.Length > 0)
                             AddArgumentProcessor(mi);
@@ -87,44 +81,37 @@ namespace Commons.GetOptions
 
         public string Usage { get; set; }
 
+        static int IndexOfAny(string where, params char[] what) => where.IndexOfAny(what);
+
         public Arguments ProcessArgs(string[] originalArgs, Func<int, string[]> exitFunc)
         {
             var args = NormalizeArgs(originalArgs);
-            try
-            {
+            try {
                 int argc = args.Length;
                 bool foundNonOption = false;
-                for (int i = 0; i < argc; i++)
-                {
+                for (int i = 0; i < argc; i++) {
                     string arg = args[i];
                     string nextArg = (i + 1 < argc) ? nextArg = args[i + 1] : null;
 
-                    if (!string.IsNullOrWhiteSpace(arg))
-                    {
-                        if (MaybeAnOption(arg) && !foundNonOption)
-                        {
+                    if (!string.IsNullOrWhiteSpace(arg)) {
+                        if (MaybeAnOption(arg) && !foundNonOption) {
                             bool OptionWasProcessed = false;
-                            foreach (OptionDetails option in _list)
-                            {
+                            foreach (OptionDetails option in _list) {
                                 OptionProcessingResult result = option.ProcessArgument(arg, nextArg);
-                                if (result != OptionProcessingResult.NotThisOption)
-                                {
+                                if (result != OptionProcessingResult.NotThisOption) {
                                     OptionWasProcessed = true;
                                     if (result == OptionProcessingResult.OptionConsumedParameter)
                                         i++;
                                     break;
                                 }
                             }
-                            if (!OptionWasProcessed)
-                            {
+                            if (!OptionWasProcessed) {
                                 WriteLine(_Format("Invalid argument: '{0}'", arg));
                                 DoHelp();
                                 exitFunc(1);
                                 return null;
                             }
-                        }
-                        else
-                        {
+                        } else {
                             ProcessNonOption(arg);
                             if (_stopOnFirstNonOption && !foundNonOption)
                                 foundNonOption = true;
@@ -139,9 +126,7 @@ namespace Commons.GetOptions
                     ProcessNonOption(argument);
 
                 return new Arguments(_arguments);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 WriteLine(_Format("Exception: {0}", ex));
                 exitFunc(1);
                 return null;
@@ -184,38 +169,32 @@ namespace Commons.GetOptions
             _bannerAlreadyShown = false;
         }
 
-        private readonly AssemblyInformation _assemblyInfo;
+        readonly AssemblyInformation _assemblyInfo;
 
-        private readonly OptionsContext _context;
+        readonly OptionsContext _context;
 
-        private readonly List<OptionDetails> _list = new List<OptionDetails>();
+        readonly List<OptionDetails> _list = new List<OptionDetails>();
 
-        private readonly object _optionBundle;
+        readonly object _optionBundle;
 
-        private readonly bool _stopOnFirstNonOption;
+        readonly bool _stopOnFirstNonOption;
 
-        private MethodInfo _argumentProcessor = null;
+        MethodInfo _argumentProcessor = null;
 
-        private List<string> _arguments = new List<string>();
+        List<string> _arguments = new List<string>();
 
-        private List<string> _argumentsTail = new List<string>();
+        List<string> _argumentsTail = new List<string>();
 
-        private bool _bannerAlreadyShown = false;
+        bool _bannerAlreadyShown = false;
 
-        private bool _hasSecondLevelHelp = false;
+        bool _hasSecondLevelHelp = false;
 
-        private static int IndexOfAny(string where, params char[] what)
-        {
-            return where.IndexOfAny(what);
-        }
-
-        private void AddArgumentProcessor(MemberInfo memberInfo)
+        void AddArgumentProcessor(MemberInfo memberInfo)
         {
             if (_argumentProcessor != null)
                 throw new NotSupportedException("More than one argument processor method found");
 
-            if ((memberInfo.MemberType == MemberTypes.Method && memberInfo is MethodInfo))
-            {
+            if ((memberInfo.MemberType == MemberTypes.Method && memberInfo is MethodInfo)) {
                 if (((MethodInfo)memberInfo).ReturnType.FullName != typeof(void).FullName)
                     throw new NotSupportedException("Argument processor method must return 'void'");
 
@@ -224,70 +203,57 @@ namespace Commons.GetOptions
                     throw new NotSupportedException("Argument processor method must have a string parameter");
 
                 _argumentProcessor = (MethodInfo)memberInfo;
-            }
-            else
+            } else
                 throw new NotSupportedException("Argument processor marked member isn't a method");
         }
 
-        private ArrayList ExpandResponseFiles(string[] args)
+        ArrayList ExpandResponseFiles(string[] args)
         {
-            ArrayList result = new ArrayList();
+            var result = new ArrayList();
             foreach (string arg in args)
-                if (arg.StartsWith("@"))
+                if (arg.StartsWith("@", StringComparison.Ordinal))
                     processResponseFile(arg.Substring(1), result);
                 else
                     result.Add(arg);
             return result;
         }
 
-        private bool MaybeAnOption(string arg)
-        {
-            return ((_context.ParsingMode & OptionsParsingMode.Windows) > 0 && arg[0] == '/') ||
-                    ((_context.ParsingMode & OptionsParsingMode.Linux) > 0 && arg[0] == '-');
-        }
+        bool MaybeAnOption(string arg) => ((_context.ParsingMode & OptionsParsingMode.Windows) > 0 && arg[0] == '/') ||
+        ((_context.ParsingMode & OptionsParsingMode.Linux) > 0 && arg[0] == '-');
 
-        private string[] NormalizeArgs(string[] args)
+        string[] NormalizeArgs(string[] args)
         {
             bool ParsingOptions = true;
             var result = new List<string>();
 
-            foreach (string arg in ExpandResponseFiles(args))
-            {
-                if (arg.Length > 0)
-                {
-                    if (ParsingOptions)
-                    {
-                        if (_context.EndOptionProcessingWithDoubleDash && (arg == "--"))
-                        {
+            foreach (string arg in ExpandResponseFiles(args)) {
+                if (arg.Length > 0) {
+                    if (ParsingOptions) {
+                        if (_context.EndOptionProcessingWithDoubleDash && (arg == "--")) {
                             ParsingOptions = false;
                             continue;
                         }
 
                         if ((_context.ParsingMode & OptionsParsingMode.Linux) > 0 &&
                              arg[0] == '-' && arg.Length > 1 && arg[1] != '-' &&
-                             _context.BreakSingleDashManyLettersIntoManyOptions)
-                        {
+                             _context.BreakSingleDashManyLettersIntoManyOptions) {
                             foreach (char c in arg.Substring(1)) // many single-letter options
                                 result.Add("-" + c); // expand into individualized options
                             continue;
                         }
 
-                        if (MaybeAnOption(arg))
-                        {
+                        if (MaybeAnOption(arg)) {
                             int pos = IndexOfAny(arg, ':', '=');
 
                             if (pos < 0)
                                 result.Add(arg);
-                            else
-                            {
+                            else {
                                 result.Add(arg.Substring(0, pos));
                                 result.Add(arg.Substring(pos + 1));
                             }
                             continue;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         _argumentsTail.Add(arg);
                         continue;
                     }
@@ -300,7 +266,7 @@ namespace Commons.GetOptions
             return result.ToArray();
         }
 
-        private void ProcessNonOption(string argument)
+        void ProcessNonOption(string argument)
         {
             if (_argumentProcessor == null)
                 _arguments.Add(argument);
@@ -308,89 +274,71 @@ namespace Commons.GetOptions
                 _argumentProcessor.Invoke(_optionBundle, new object[] { argument });
         }
 
-        private void processResponseFile(string filename, ArrayList result)
+        void processResponseFile(string filename, ArrayList result)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             string line;
-            try
-            {
-                using (StreamReader responseFile = new StreamReader(filename))
-                {
+            try {
+                using (StreamReader responseFile = new StreamReader(filename)) {
                     while ((line = responseFile.ReadLine()) != null)
                         processResponseFileLine(line, result, sb);
                 }
-            }
-            catch (FileNotFoundException)
-            {
+            } catch (FileNotFoundException) {
                 _context.ReportError(2011, "Unable to find response file '" + filename + "'");
-            }
-            catch (Exception exception)
-            {
+            } catch (Exception exception) {
                 _context.ReportError(2011, "Unable to open response file '" + filename + "'. " + exception.Message);
             }
         }
 
-        private void processResponseFileLine(string line, ArrayList result, StringBuilder sb)
+        void processResponseFileLine(string line, ArrayList result, StringBuilder sb)
         {
             int t = line.Length;
-            for (int i = 0; i < t; i++)
-            {
+            for (int i = 0; i < t; i++) {
                 char c = line[i];
-                if (c == '"' || c == '\'')
-                {
+                if (c == '"' || c == '\'') {
                     char end = c;
-                    for (i++; i < t; i++)
-                    {
+                    for (i++; i < t; i++) {
                         c = line[i];
                         if (c == end)
                             break;
                         sb.Append(c);
                     }
-                }
-                else if (c == ' ')
-                {
-                    if (sb.Length > 0)
-                    {
+                } else if (c == ' ') {
+                    if (sb.Length > 0) {
                         result.Add(sb.ToString());
                         sb.Length = 0;
                     }
-                }
-                else
-                {
+                } else {
                     sb.Append(c);
                 }
             }
-            if (sb.Length > 0)
-            {
+            if (sb.Length > 0) {
                 result.Add(sb.ToString());
                 sb.Length = 0;
             }
         }
 
-        private void ShowHelp(List<ICommand> allCommands)
+        void ShowHelp(List<ICommand> allCommands)
         {
             _assemblyInfo.ShowTitleLines();
             WriteLine(Usage);
             WriteLine(_("Commands:"));
-            foreach (var command in allCommands)
-            {
+            foreach (var command in allCommands) {
                 WriteLine("\t{0}\t{1}", command.Name.ToLowerInvariant(), command.Description);
             }
         }
 
-        private void ShowHelp(bool showSecondLevelHelp)
+        void ShowHelp(bool showSecondLevelHelp)
         {
             _assemblyInfo.ShowTitleLines();
             WriteLine(Usage);
             WriteLine(_("Options:"));
-            ArrayList lines = new ArrayList(_list.Count);
+            var lines = new ArrayList(_list.Count);
             int tabSize = 0;
             foreach (OptionDetails option in _list)
-                if (option.SecondLevelHelp == showSecondLevelHelp)
-                {
+                if (option.SecondLevelHelp == showSecondLevelHelp) {
                     string[] optionLines = option.ToString().Split('\n');
-                    foreach (string line in optionLines)
-                    {
+                    foreach (string line in optionLines) {
                         int pos = line.IndexOf('\t');
                         if (pos > tabSize)
                             tabSize = pos;
@@ -398,16 +346,13 @@ namespace Commons.GetOptions
                     }
                 }
             tabSize += 2;
-            foreach (string line in lines)
-            {
+            foreach (string line in lines) {
                 string[] parts = line.Split('\t');
                 Write(parts[0].PadRight(tabSize));
                 WriteLine(parts[1]);
-                if (parts.Length > 2)
-                {
-                    string spacer = new string(' ', tabSize);
-                    for (int i = 2; i < parts.Length; i++)
-                    {
+                if (parts.Length > 2) {
+                    var spacer = new string(' ', tabSize);
+                    for (int i = 2; i < parts.Length; i++) {
                         Write(spacer);
                         WriteLine(parts[i]);
                     }

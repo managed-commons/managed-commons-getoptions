@@ -40,24 +40,17 @@ namespace Commons.GetOptions
         public readonly List<ICommand> AllCommands = new List<ICommand>();
         public readonly OptionsContext Context = new OptionsContext();
 
-        public virtual string AdditionalBannerInfo { get { return null; } }
+        public virtual string AdditionalBannerInfo => null;
 
-        public bool Equals(ICommand x, ICommand y)
-        {
-            return x.Name.Equals(y.Name, StringComparison.InvariantCultureIgnoreCase);
-        }
+        public bool Equals(ICommand x, ICommand y) => x.Name.Equals(y.Name, StringComparison.InvariantCultureIgnoreCase);
 
-        public int GetHashCode(ICommand obj)
-        {
-            return obj.Name.GetHashCode();
-        }
+        public int GetHashCode(ICommand obj) => obj.Name.GetHashCode();
 
         public void ProcessArgs(string[] args, Func<int, string[]> exitFunc)
         {
-            OptionList optionParser = new OptionList(this, Context, stopOnFirstNonOption: true);
+            var optionParser = new OptionList(this, Context, stopOnFirstNonOption: true);
             optionParser.AdditionalBannerInfo = AdditionalBannerInfo;
-            if (args == null || args.Length == 0)
-            {
+            if (args == null || args.Length == 0) {
                 optionParser.DoHelp();
                 return;
             }
@@ -72,17 +65,14 @@ namespace Commons.GetOptions
             var commandName = remainingArgs.FirstOrDefault();
             var commandArgs = remainingArgs.Skip(1).ToArray();
 
-            if (string.IsNullOrWhiteSpace(commandName))
-            {
+            if (string.IsNullOrWhiteSpace(commandName)) {
                 optionParser.DoHelp();
                 return;
             }
 
-            foreach (var command in AllCommands)
-            {
-                if (commandName.Equals(command.Name, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    OptionList parser = new OptionList(command, Context);
+            foreach (var command in AllCommands) {
+                if (commandName.Equals(command.Name, StringComparison.InvariantCultureIgnoreCase)) {
+                    var parser = new OptionList(command, Context);
                     parser.AdditionalBannerInfo = AdditionalBannerInfo;
                     command.Execute(parser.ProcessArgs(commandArgs, exitFunc), Context.ReportError);
                 }
@@ -99,31 +89,27 @@ namespace Commons.GetOptions
             _context = context;
         }
 
-        public string Description { get { return "Show help about commands"; } }
+        public string Description => "Show help about commands";
 
-        public string Name { get { return "help"; } }
+        public string Name => "help";
 
         public void Execute(IEnumerable<string> args, ErrorReporter ReportError)
         {
             var commandName = args.FirstOrDefault();
-            if (!string.IsNullOrWhiteSpace(commandName))
-            {
-                foreach (var command in _commands)
-                {
-                    if (commandName.Equals(command.Name, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        OptionList parser = new OptionList(command, _context);
+            if (!string.IsNullOrWhiteSpace(commandName)) {
+                foreach (var command in _commands) {
+                    if (commandName.Equals(command.Name, StringComparison.InvariantCultureIgnoreCase)) {
+                        var parser = new OptionList(command, _context);
                         parser.DoHelp();
                         return;
                     }
                 }
-            }
-            else
+            } else
                 _optionParser.DoHelp(_commands);
         }
 
-        private readonly List<ICommand> _commands;
-        private readonly OptionsContext _context;
-        private readonly OptionList _optionParser;
+        readonly List<ICommand> _commands;
+        readonly OptionsContext _context;
+        readonly OptionList _optionParser;
     }
 }
